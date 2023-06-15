@@ -15,7 +15,7 @@ class Vtop___024root;
 class VerilatedVcdC;
 
 // This class is the main interface to the Verilated model
-class alignas(VL_CACHE_LINE_BYTES) Vtop VL_NOT_FINAL : public VerilatedModel {
+class Vtop VL_NOT_FINAL : public VerilatedModel {
   private:
     // Symbol table holding complete model state (owned by this class)
     Vtop__Syms* const vlSymsp;
@@ -74,6 +74,6 @@ class alignas(VL_CACHE_LINE_BYTES) Vtop VL_NOT_FINAL : public VerilatedModel {
     const char* modelName() const override final;
     unsigned threads() const override final;
     std::unique_ptr<VerilatedTraceConfig> traceConfig() const override final;
-};
+} VL_ATTR_ALIGNED(VL_CACHE_LINE_BYTES);
 
 #endif  // guard

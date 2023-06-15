@@ -7,10 +7,10 @@
 //   Instr.   Addr.
 // OP_LDA : 1000 => Load value at address into register A
 // OP_LDB : 0100 => Load value at address into register B
-// OP_ADD : 0010 => Add values in registers A and B
-// OP_SUB : 0001 => Subtract value in Register B from register A
-// OP_MUL : 1100 => Mutiply A and B
-// OP_DIV : 1010 => Divide A by B
+// OP_ADD : 0010 => Add values in Register A and bus and dump in register B
+// OP_SUB : 0001 => Subtract value in  bus from register A
+// OP_MUL : 1100 => Mutiply A and value in bus and dump in register B
+// OP_DIV : 1010 => Divide A by value in bus and dump in register B
 // OP_JMP : 1001 => Jump to instruction at address
 // OP_HLT : 1111 => Halt 
 
@@ -97,16 +97,33 @@ module ram(output [7:0] to_ir, inout [7:0] to_a, inout [7:0] to_b, input [3:0] m
 endmodule
 // Stuff on data bus
 
-module areg(inout [7:0] bus_d, input [7:0] from_ram, input clk, input out_b, input out_a, input active);
+module register(inout [7:0] bus_d, input [7:0] from_ram, input clk, input ram_in, input out_b);
 
     reg [7:0] areg;
 
     always @(posedge clk) begin
-        areg <= from_ram;
+        if (ram_in)
+            areg <= from_ram;
     end
 
     assign bus_d = (out_b) ? areg : 8'bz;
 
+
+endmodule
+
+
+module alu(inout [7:0] bus_d, input [7:0] from_a, output [7:0] to_b, input ad, input sub);
+    reg [7:0] out;
+    
+    always @(posedge clk) begin
+        if(ad)
+            out <= from_a + bus_d;
+        if(sub)
+            out <= from_a - bus_d;
+    
+    assign to_b = (ad || sub) ? out : 8'bz;
+
+    end
 
 endmodule
 
@@ -172,10 +189,16 @@ module top(output [7:0] bus_i, input clk, input reset);
     reg pc_a = 0;
     reg mar_a = 0;
     reg ir_a = 0;
+    // RAM flags
     reg in_b = 0;
     reg out_b = 0;
     reg in_a = 0;
     reg out_a = 0;
+    //-----
+    // Register flags
+    reg a_out = 0;
+    //----
+    reg out_bus = 0;
     reg [3:0] ir_i;
     reg [7:0] bus_d;
     wire [3:0] to_ram;
@@ -192,6 +215,10 @@ module top(output [7:0] bus_i, input clk, input reset);
     ram ram(.to_ir(to_ir), .to_a(to_a), .to_b(to_b), .mar_in(to_ram), .in_b(in_b), .out_b(out_b), .in_a(in_a), .out_a(out_a), .clk(clk), .reset(reset));
 
     instruction_register ir(.bus_i(bus_i), .from_ram(to_ir), .to_ctrl(ir_i), .clk(clk), .reset(reset), .ir_a(ir_a));
+
+    register areg(.bus_d(bus_d), .from_ram(to_a), .clk(clk), .ram_in(out_a), .out_b(a_out));
+
+
 
 
 endmodule

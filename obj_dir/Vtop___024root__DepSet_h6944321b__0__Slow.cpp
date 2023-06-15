@@ -4,7 +4,6 @@
 
 #include "verilated.h"
 
-#include "Vtop__Syms.h"
 #include "Vtop___024root.h"
 
 VL_ATTR_COLD void Vtop___024root___eval_static__TOP(Vtop___024root* vlSelf);
@@ -28,7 +27,6 @@ VL_ATTR_COLD void Vtop___024root___eval_static__TOP(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__mar_a = 0U;
     vlSelf->top__DOT__ir_a = 0U;
     vlSelf->top__DOT__control__DOT__stagecount = 0U;
-    vlSelf->top__DOT__control__DOT__aflag = 0U;
 }
 
 VL_ATTR_COLD void Vtop___024root___eval_initial(Vtop___024root* vlSelf) {
@@ -36,7 +34,7 @@ VL_ATTR_COLD void Vtop___024root___eval_initial(Vtop___024root* vlSelf) {
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root___eval_initial\n"); );
     // Body
-    vlSelf->__Vtrigprevexpr___TOP__clk__0 = vlSelf->clk;
+    vlSelf->__Vtrigrprev__TOP__clk = vlSelf->clk;
 }
 
 VL_ATTR_COLD void Vtop___024root___eval_final(Vtop___024root* vlSelf) {
@@ -69,7 +67,7 @@ VL_ATTR_COLD void Vtop___024root___eval_settle(Vtop___024root* vlSelf) {
 #ifdef VL_DEBUG
                 Vtop___024root___dump_triggers__stl(vlSelf);
 #endif
-                VL_FATAL_MT("cpuf.v", 170, "", "Settle region did not converge.");
+                VL_FATAL_MT("cpuf.v", 188, "", "Settle region did not converge.");
             }
             vlSelf->__VstlIterCount = ((IData)(1U) 
                                        + vlSelf->__VstlIterCount);
@@ -87,7 +85,7 @@ VL_ATTR_COLD void Vtop___024root___dump_triggers__stl(Vtop___024root* vlSelf) {
     if ((1U & (~ (IData)(vlSelf->__VstlTriggered.any())))) {
         VL_DBG_MSGF("         No triggers active\n");
     }
-    if ((1ULL & vlSelf->__VstlTriggered.word(0U))) {
+    if (vlSelf->__VstlTriggered.at(0U)) {
         VL_DBG_MSGF("         'stl' region trigger index 0 is active: Internal 'stl' trigger - first iteration\n");
     }
 }
@@ -113,7 +111,7 @@ VL_ATTR_COLD void Vtop___024root___eval_stl(Vtop___024root* vlSelf) {
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root___eval_stl\n"); );
     // Body
-    if ((1ULL & vlSelf->__VstlTriggered.word(0U))) {
+    if (vlSelf->__VstlTriggered.at(0U)) {
         Vtop___024root___stl_sequent__TOP__0(vlSelf);
     }
 }
@@ -127,7 +125,7 @@ VL_ATTR_COLD void Vtop___024root___dump_triggers__act(Vtop___024root* vlSelf) {
     if ((1U & (~ (IData)(vlSelf->__VactTriggered.any())))) {
         VL_DBG_MSGF("         No triggers active\n");
     }
-    if ((1ULL & vlSelf->__VactTriggered.word(0U))) {
+    if (vlSelf->__VactTriggered.at(0U)) {
         VL_DBG_MSGF("         'act' region trigger index 0 is active: @(posedge clk)\n");
     }
 }
@@ -142,7 +140,7 @@ VL_ATTR_COLD void Vtop___024root___dump_triggers__nba(Vtop___024root* vlSelf) {
     if ((1U & (~ (IData)(vlSelf->__VnbaTriggered.any())))) {
         VL_DBG_MSGF("         No triggers active\n");
     }
-    if ((1ULL & vlSelf->__VnbaTriggered.word(0U))) {
+    if (vlSelf->__VnbaTriggered.at(0U)) {
         VL_DBG_MSGF("         'nba' region trigger index 0 is active: @(posedge clk)\n");
     }
 }
@@ -160,14 +158,14 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__mar_a = VL_RAND_RESET_I(1);
     vlSelf->top__DOT__ir_a = VL_RAND_RESET_I(1);
     vlSelf->top__DOT__control__DOT__stagecount = VL_RAND_RESET_I(3);
-    vlSelf->top__DOT__control__DOT__aflag = VL_RAND_RESET_I(1);
     vlSelf->top__DOT__counter__DOT__pc = VL_RAND_RESET_I(4);
     vlSelf->top__DOT__mar__DOT__address = VL_RAND_RESET_I(4);
     VL_RAND_RESET_W(129, vlSelf->top__DOT__ram__DOT__mem);
     vlSelf->top__DOT__ram__DOT__index = VL_RAND_RESET_I(8);
     vlSelf->top__DOT__ram__DOT__out = VL_RAND_RESET_I(8);
     vlSelf->top__DOT__ir__DOT__instruction = VL_RAND_RESET_I(4);
-    vlSelf->__Vtrigprevexpr___TOP__clk__0 = VL_RAND_RESET_I(1);
+    vlSelf->top__DOT__areg__DOT__areg = VL_RAND_RESET_I(8);
+    vlSelf->__Vtrigrprev__TOP__clk = VL_RAND_RESET_I(1);
     for (int __Vi0 = 0; __Vi0 < 2; ++__Vi0) {
         vlSelf->__Vm_traceActivity[__Vi0] = 0;
     }

@@ -4,7 +4,6 @@
 
 #include "verilated.h"
 
-#include "Vtop__Syms.h"
 #include "Vtop___024root.h"
 
 void Vtop___024root___eval_act(Vtop___024root* vlSelf) {
@@ -45,13 +44,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
         vlSelf->top__DOT__pc_a = 0U;
         vlSelf->top__DOT__mar_a = 0U;
         vlSelf->top__DOT__ir_a = 1U;
-    }
-    if ((8U == ((((IData)(vlSelf->top__DOT__ir_a) ? (IData)(vlSelf->top__DOT__ir__DOT__instruction)
-                   : 0U) & ((IData)(vlSelf->top__DOT__ir_a)
-                             ? 0xfU : 0U)) & ((IData)(vlSelf->top__DOT__ir_a)
-                                               ? 0xfU
-                                               : 0U)))) {
-        vlSelf->top__DOT__control__DOT__aflag = 1U;
     }
     if (vlSelf->reset) {
         __Vdly__top__DOT__counter__DOT__pc = 0U;
@@ -130,7 +122,7 @@ void Vtop___024root___eval_nba(Vtop___024root* vlSelf) {
     Vtop__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtop___024root___eval_nba\n"); );
     // Body
-    if ((1ULL & vlSelf->__VnbaTriggered.word(0U))) {
+    if (vlSelf->__VnbaTriggered.at(0U)) {
         Vtop___024root___nba_sequent__TOP__0(vlSelf);
         vlSelf->__Vm_traceActivity[1U] = 1U;
     }
@@ -169,12 +161,12 @@ void Vtop___024root___eval(Vtop___024root* vlSelf) {
 #ifdef VL_DEBUG
                     Vtop___024root___dump_triggers__act(vlSelf);
 #endif
-                    VL_FATAL_MT("cpuf.v", 170, "", "Active region did not converge.");
+                    VL_FATAL_MT("cpuf.v", 188, "", "Active region did not converge.");
                 }
                 vlSelf->__VactIterCount = ((IData)(1U) 
                                            + vlSelf->__VactIterCount);
                 __VpreTriggered.andNot(vlSelf->__VactTriggered, vlSelf->__VnbaTriggered);
-                vlSelf->__VnbaTriggered.thisOr(vlSelf->__VactTriggered);
+                vlSelf->__VnbaTriggered.set(vlSelf->__VactTriggered);
                 Vtop___024root___eval_act(vlSelf);
             }
         }
@@ -184,7 +176,7 @@ void Vtop___024root___eval(Vtop___024root* vlSelf) {
 #ifdef VL_DEBUG
                 Vtop___024root___dump_triggers__nba(vlSelf);
 #endif
-                VL_FATAL_MT("cpuf.v", 170, "", "NBA region did not converge.");
+                VL_FATAL_MT("cpuf.v", 188, "", "NBA region did not converge.");
             }
             __VnbaIterCount = ((IData)(1U) + __VnbaIterCount);
             Vtop___024root___eval_nba(vlSelf);

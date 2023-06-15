@@ -50,7 +50,6 @@ void Vtop::eval_step() {
     Vtop___024root___eval_debug_assertions(&(vlSymsp->TOP));
 #endif  // VL_DEBUG
     vlSymsp->__Vm_activity = true;
-    vlSymsp->__Vm_deleter.deleteAll();
     if (VL_UNLIKELY(!vlSymsp->__Vm_didInit)) {
         vlSymsp->__Vm_didInit = true;
         VL_DEBUG_IF(VL_DBG_MSGF("+ Initial\n"););
