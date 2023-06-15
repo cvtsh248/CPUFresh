@@ -26,6 +26,8 @@ VL_ATTR_COLD void Vtop___024root___eval_static__TOP(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__pc_a = 0U;
     vlSelf->top__DOT__mar_a = 0U;
     vlSelf->top__DOT__ir_a = 0U;
+    vlSelf->top__DOT__in_a = 0U;
+    vlSelf->top__DOT__out_a = 0U;
     vlSelf->top__DOT__control__DOT__stagecount = 0U;
 }
 
@@ -67,7 +69,7 @@ VL_ATTR_COLD void Vtop___024root___eval_settle(Vtop___024root* vlSelf) {
 #ifdef VL_DEBUG
                 Vtop___024root___dump_triggers__stl(vlSelf);
 #endif
-                VL_FATAL_MT("cpuf.v", 188, "", "Settle region did not converge.");
+                VL_FATAL_MT("cpuf.v", 215, "", "Settle region did not converge.");
             }
             vlSelf->__VstlIterCount = ((IData)(1U) 
                                        + vlSelf->__VstlIterCount);
@@ -104,6 +106,19 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                                             : 0U) & 
                                           ((IData)(vlSelf->top__DOT__pc_a)
                                             ? 0xfU : 0U))));
+    vlSelf->top__DOT__ir_i = ((((IData)(vlSelf->top__DOT__ir_a)
+                                 ? (IData)(vlSelf->top__DOT__ir__DOT__instruction)
+                                 : 0U) & ((IData)(vlSelf->top__DOT__ir_a)
+                                           ? 0xfU : 0U)) 
+                              & ((IData)(vlSelf->top__DOT__ir_a)
+                                  ? 0xfU : 0U));
+    vlSelf->top__DOT__to_a = (((IData)(vlSelf->top__DOT__out_a)
+                                ? 0xffU : 0U) & (((IData)(vlSelf->top__DOT__out_a)
+                                                   ? (IData)(vlSelf->top__DOT__ram__DOT__out)
+                                                   : 0U) 
+                                                 & ((IData)(vlSelf->top__DOT__out_a)
+                                                     ? 0xffU
+                                                     : 0U)));
 }
 
 VL_ATTR_COLD void Vtop___024root___eval_stl(Vtop___024root* vlSelf) {
@@ -113,6 +128,8 @@ VL_ATTR_COLD void Vtop___024root___eval_stl(Vtop___024root* vlSelf) {
     // Body
     if (vlSelf->__VstlTriggered.at(0U)) {
         Vtop___024root___stl_sequent__TOP__0(vlSelf);
+        vlSelf->__Vm_traceActivity[1U] = 1U;
+        vlSelf->__Vm_traceActivity[0U] = 1U;
     }
 }
 
@@ -157,6 +174,10 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__pc_a = VL_RAND_RESET_I(1);
     vlSelf->top__DOT__mar_a = VL_RAND_RESET_I(1);
     vlSelf->top__DOT__ir_a = VL_RAND_RESET_I(1);
+    vlSelf->top__DOT__in_a = VL_RAND_RESET_I(1);
+    vlSelf->top__DOT__out_a = VL_RAND_RESET_I(1);
+    vlSelf->top__DOT__ir_i = VL_RAND_RESET_I(4);
+    vlSelf->top__DOT__to_a = VL_RAND_RESET_I(8);
     vlSelf->top__DOT__control__DOT__stagecount = VL_RAND_RESET_I(3);
     vlSelf->top__DOT__counter__DOT__pc = VL_RAND_RESET_I(4);
     vlSelf->top__DOT__mar__DOT__address = VL_RAND_RESET_I(4);
@@ -164,6 +185,7 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__ram__DOT__index = VL_RAND_RESET_I(8);
     vlSelf->top__DOT__ram__DOT__out = VL_RAND_RESET_I(8);
     vlSelf->top__DOT__ir__DOT__instruction = VL_RAND_RESET_I(4);
+    vlSelf->top__DOT__ir__DOT__address = VL_RAND_RESET_I(4);
     vlSelf->top__DOT__areg__DOT__areg = VL_RAND_RESET_I(8);
     vlSelf->__Vtrigrprev__TOP__clk = VL_RAND_RESET_I(1);
     for (int __Vi0 = 0; __Vi0 < 2; ++__Vi0) {

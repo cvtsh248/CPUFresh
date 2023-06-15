@@ -30,23 +30,26 @@ module program_counter(inout [7:0] bus_i, input clk, input reset, input pc_a);
 
 endmodule
 
-module instruction_register(inout [7:0] bus_i, input [7:0] from_ram, output [3:0] to_ctrl, input clk, input reset, input ir_a);
+module instruction_register(inout [7:0] bus_i, input [7:0] from_ram, output [3:0] to_ctrl, output [3:0] to_ram, input clk, input reset, input ir_a);
 
     reg [3:0] instruction;
+    reg [3:0] address; // Address in instruction
 
     always @(posedge clk) begin
         if (reset)
             instruction <= 0;
         else if (ir_a)
             instruction <= from_ram[7:4]; 
+        address <= from_ram[3:0];
     end
 
     //assign bus_i = (out_b) ? {instruction,4'bz} : 8'bz;
     assign to_ctrl = (ir_a) ? instruction : 4'bz;
+    assign to_ram = address;
 
 endmodule
 
-module mar(inout [7:0] bus_i, output [3:0] to_ram, input clk, input reset, input mar_a);
+module mar(inout [7:0] bus_i, output [3:0] to_ram, input [3:0] from_ir, input clk, input reset, input mar_a);
 
     reg [3:0] address;
 
@@ -55,27 +58,30 @@ module mar(inout [7:0] bus_i, output [3:0] to_ram, input clk, input reset, input
             address <= 0;
         else if (mar_a)
             address <= bus_i[3:0];
+        else
+            address <= from_ir;
     end
 
-    assign to_ram = (mar_a) ? address : 4'bz;
-
+    //assign to_ram = (mar_a) ? address : 4'bz;
+    assign to_ram = address;
 endmodule
 // -----
 
 // RAM
-module ram(output [7:0] to_ir, inout [7:0] to_a, inout [7:0] to_b, input [3:0] mar_in, input in_b, input out_b, input in_a, input out_a, input clk, input reset);
+module ram(output [7:0] to_ir, inout [7:0] to_a, inout [7:0] to_b, input [3:0] mar_in, input [3:0] address_ir, input in_b, input out_b, input in_a, input out_a, input clk, input reset);
 
     reg [128:0] mem;
     reg [7:0] index;
     reg [7:0] out;
 
     always @(posedge clk) begin
-        mem[7:0] <= 8'b00000000;
-        mem[15:8] <= 8'b01000001;
-        mem[23:16] <= 8'b11111111;
+        mem[7:0] <= 8'b10000011;
+        mem[15:8] <= 8'b10000001;
+        mem[23:16] <= 8'b01101111;
         mem[31:24] <= 8'b00000010;
         mem[39:32] <= 8'b00000001;
-        mem[47:40] <= 8'b10001001;
+        mem[47:40] <= 8'b00001001;
+        
         if(reset) begin
             index <= 0;
             out <= 0;
@@ -87,6 +93,7 @@ module ram(output [7:0] to_ir, inout [7:0] to_a, inout [7:0] to_b, input [3:0] m
             mem[119:112] <= to_a;
         end
         index <= mar_in * 8;
+        //index <= address_ir*8;
         out <= mem[index +: 8];
     end
 
@@ -127,7 +134,7 @@ module alu(inout [7:0] bus_d, input [7:0] from_a, output [7:0] to_b, input ad, i
 
 endmodule
 
-module controller(inout [7:0] bus_i, inout [7:0] bus_d, output reg pc_a, output reg mar_a, output reg ir_a, input [3:0] ir_i, input clk, input reset);
+module controller(inout [7:0] bus_i, inout [7:0] bus_d, output reg pc_a, output reg mar_a, output reg ir_a, output reg in_a, output reg out_a, input [3:0] ir_i, input clk, input reset);
     reg [2:0] stagecount = 0;
     reg aflag = 0;
 
@@ -143,14 +150,16 @@ module controller(inout [7:0] bus_i, inout [7:0] bus_d, output reg pc_a, output 
     parameter OP_HLT = 4'b1111;
 
 
-    // Control word: pc_a, mar_a, ir_a
+    // Control word: pc_a, mar_a, ir_a, in_a, out_a
 
     always @(posedge clk) begin
         stagecount = stagecount + 1;
-        if (stagecount == 4) begin
+        if (stagecount == 6) begin
             pc_a = 0;
             mar_a = 0;
             ir_a = 0;
+            in_a = 0;
+            out_a = 0;
             //ctrl_wd = 000;
             stagecount = 0;
         end
@@ -159,22 +168,40 @@ module controller(inout [7:0] bus_i, inout [7:0] bus_d, output reg pc_a, output 
             pc_a = 1;
             mar_a = 1;
             ir_a = 0;
+            in_a = 0;
+            out_a = 0;
             //ctrl_wd = 110;
         end
         if (stagecount == 2) begin
             pc_a = 0;
             mar_a = 1;
             ir_a = 0;
+            in_a = 0;
+            out_a = 0;
             //ctrl_wd = 010;
         end
         if (stagecount == 3) begin
             pc_a = 0;
             mar_a = 0;
             ir_a = 1;
+            in_a = 0;
+            out_a = 0;
             //ctrl_wd = 001;
         end
         if (ir_i == OP_LDA) begin
             if (stagecount == 4) begin
+                pc_a = 0;
+                mar_a = 0;
+                ir_a = 0;
+                in_a = 0;
+                out_a = 1;
+            end
+            if (stagecount == 5) begin
+                pc_a = 0;
+                mar_a = 0;
+                ir_a = 0;
+                in_a = 0;
+                out_a = 0;
             end
         end 
 
@@ -205,16 +232,17 @@ module top(output [7:0] bus_i, input clk, input reset);
     wire [7:0] to_ir;
     wire [7:0] to_a;
     wire [7:0] to_b;
+    wire [3:0] address_ir;
 
-    controller control(.bus_i(bus_i), .bus_d(bus_d), .pc_a(pc_a), .mar_a(mar_a), .ir_a(ir_a), .ir_i(ir_i), .clk(clk), .reset(reset));
+    controller control(.bus_i(bus_i), .bus_d(bus_d), .pc_a(pc_a), .mar_a(mar_a), .ir_a(ir_a), .in_a(in_a), .out_a(out_a), .ir_i(ir_i), .clk(clk), .reset(reset));
 
     program_counter counter(.bus_i(bus_i), .clk(clk), .reset(reset), .pc_a(pc_a));
 
-    mar mar(.bus_i(bus_i), .to_ram(to_ram), .clk(clk), .reset(reset), .mar_a(mar_a));
+    mar mar(.bus_i(bus_i), .to_ram(to_ram), .from_ir(address_ir), .clk(clk), .reset(reset), .mar_a(mar_a));
 
-    ram ram(.to_ir(to_ir), .to_a(to_a), .to_b(to_b), .mar_in(to_ram), .in_b(in_b), .out_b(out_b), .in_a(in_a), .out_a(out_a), .clk(clk), .reset(reset));
+    ram ram(.to_ir(to_ir), .to_a(to_a), .to_b(to_b), .mar_in(to_ram), .address_ir(address_ir), .in_b(in_b), .out_b(out_b), .in_a(in_a), .out_a(out_a), .clk(clk), .reset(reset));
 
-    instruction_register ir(.bus_i(bus_i), .from_ram(to_ir), .to_ctrl(ir_i), .clk(clk), .reset(reset), .ir_a(ir_a));
+    instruction_register ir(.bus_i(bus_i), .from_ram(to_ir), .to_ctrl(ir_i), .to_ram(address_ir), .clk(clk), .reset(reset), .ir_a(ir_a));
 
     register areg(.bus_d(bus_d), .from_ram(to_a), .clk(clk), .ram_in(out_a), .out_b(a_out));
 
