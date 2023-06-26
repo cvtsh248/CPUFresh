@@ -21,13 +21,14 @@ class Vtop___024root final : public VerilatedModule {
     CData/*0:0*/ top__DOT__ir_a;
     CData/*0:0*/ top__DOT__in_a;
     CData/*0:0*/ top__DOT__out_a;
-    CData/*3:0*/ top__DOT__ir_i;
     CData/*7:0*/ top__DOT__to_a;
     CData/*2:0*/ top__DOT__control__DOT__stagecount;
     CData/*3:0*/ top__DOT__counter__DOT__pc;
     CData/*3:0*/ top__DOT__mar__DOT__address;
-    CData/*7:0*/ top__DOT__ram__DOT__index;
-    CData/*7:0*/ top__DOT__ram__DOT__out;
+    CData/*7:0*/ top__DOT__ram__DOT__index_ir;
+    CData/*7:0*/ top__DOT__ram__DOT__index_reg;
+    CData/*7:0*/ top__DOT__ram__DOT__out_reg;
+    CData/*7:0*/ top__DOT__ram__DOT__out_ir;
     CData/*3:0*/ top__DOT__ir__DOT__instruction;
     CData/*3:0*/ top__DOT__ir__DOT__address;
     CData/*7:0*/ top__DOT__areg__DOT__areg;

@@ -36,15 +36,17 @@ module instruction_register(inout [7:0] bus_i, input [7:0] from_ram, output [3:0
     reg [3:0] address; // Address in instruction
 
     always @(posedge clk) begin
-        if (reset)
+        if (reset) begin
             instruction <= 0;
-        else if (ir_a)
-            instruction <= from_ram[7:4]; 
-        address <= from_ram[3:0];
+        end
+        else if (ir_a) begin
+            address <= from_ram[3:0];
+            instruction <= from_ram[7:4];
+        end 
     end
 
     //assign bus_i = (out_b) ? {instruction,4'bz} : 8'bz;
-    assign to_ctrl = (ir_a) ? instruction : 4'bz;
+    assign to_ctrl = (1) ? instruction : 4'bz;
     assign to_ram = address;
 
 endmodule
@@ -54,12 +56,10 @@ module mar(inout [7:0] bus_i, output [3:0] to_ram, input [3:0] from_ir, input cl
     reg [3:0] address;
 
     always @(posedge clk) begin
-        if(reset)
-            address <= 0;
-        else if (mar_a)
+        if (mar_a)
             address <= bus_i[3:0];
-        else
-            address <= from_ir;
+        //else
+        //    address <= from_ir;
     end
 
     //assign to_ram = (mar_a) ? address : 4'bz;
@@ -71,20 +71,22 @@ endmodule
 module ram(output [7:0] to_ir, inout [7:0] to_a, inout [7:0] to_b, input [3:0] mar_in, input [3:0] address_ir, input in_b, input out_b, input in_a, input out_a, input clk, input reset);
 
     reg [128:0] mem;
-    reg [7:0] index;
-    reg [7:0] out;
+    reg [7:0] index_ir;
+    reg [7:0] index_reg;
+    reg [7:0] out_reg;
+    reg [7:0] out_ir;
 
     always @(posedge clk) begin
-        mem[7:0] <= 8'b10000011;
-        mem[15:8] <= 8'b10000001;
-        mem[23:16] <= 8'b01101111;
-        mem[31:24] <= 8'b00000010;
-        mem[39:32] <= 8'b00000001;
-        mem[47:40] <= 8'b00001001;
+        mem[7:0] <= 8'b10000100;
+        mem[15:8] <= 8'b10000101;
+        mem[23:16] <= 8'b10000110;
+        mem[31:24] <= 8'b00001111;
+        mem[39:32] <= 8'b01000100;
+        mem[47:40] <= 8'b01000110;
         
         if(reset) begin
-            index <= 0;
-            out <= 0;
+            //index <= 0;
+            //out <= 0;
         end
         else if(in_b) begin
             mem[127:120] <= to_b;
@@ -92,14 +94,15 @@ module ram(output [7:0] to_ir, inout [7:0] to_a, inout [7:0] to_b, input [3:0] m
         else if(in_a) begin
             mem[119:112] <= to_a;
         end
-        index <= mar_in * 8;
-        //index <= address_ir*8;
-        out <= mem[index +: 8];
+        index_ir <= mar_in * 8;
+        index_reg <= address_ir * 8;
+        out_reg <= mem[index_reg +: 8];
+        out_ir <= mem[index_ir +: 8];
     end
 
-    assign to_a = (out_a) ? out : 8'bz;
-    assign to_b = (out_b) ? out : 8'bz;
-    assign to_ir = out;
+    assign to_a = (out_a) ? out_reg : 8'bz;
+    assign to_b = (out_b) ? out_reg : 8'bz;
+    assign to_ir = out_ir;
 
 endmodule
 // Stuff on data bus
@@ -109,8 +112,8 @@ module register(inout [7:0] bus_d, input [7:0] from_ram, input clk, input ram_in
     reg [7:0] areg;
 
     always @(posedge clk) begin
-        if (ram_in)
-            areg <= from_ram;
+        //if (ram_in)
+        areg <= from_ram;
     end
 
     assign bus_d = (out_b) ? areg : 8'bz;
@@ -166,7 +169,7 @@ module controller(inout [7:0] bus_i, inout [7:0] bus_d, output reg pc_a, output 
         // First 3 stages are always the same
         if (stagecount == 1) begin
             pc_a = 1;
-            mar_a = 1;
+            mar_a = 0;
             ir_a = 0;
             in_a = 0;
             out_a = 0;
@@ -175,7 +178,7 @@ module controller(inout [7:0] bus_i, inout [7:0] bus_d, output reg pc_a, output 
         if (stagecount == 2) begin
             pc_a = 0;
             mar_a = 1;
-            ir_a = 0;
+            ir_a = 0; //0
             in_a = 0;
             out_a = 0;
             //ctrl_wd = 010;
@@ -183,7 +186,7 @@ module controller(inout [7:0] bus_i, inout [7:0] bus_d, output reg pc_a, output 
         if (stagecount == 3) begin
             pc_a = 0;
             mar_a = 0;
-            ir_a = 1;
+            ir_a = 1; //1
             in_a = 0;
             out_a = 0;
             //ctrl_wd = 001;
@@ -204,6 +207,22 @@ module controller(inout [7:0] bus_i, inout [7:0] bus_d, output reg pc_a, output 
                 out_a = 0;
             end
         end 
+        else begin
+            if (stagecount == 4) begin
+                pc_a = 0;
+                mar_a = 0;
+                ir_a = 0;
+                in_a = 0;
+                out_a = 0;
+            end
+            if (stagecount == 5) begin
+                pc_a = 0;
+                mar_a = 0;
+                ir_a = 0;
+                in_a = 0;
+                out_a = 0;
+            end
+        end
 
 
         
