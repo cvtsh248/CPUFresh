@@ -81,12 +81,12 @@ module ram(output [7:0] to_ir, inout [7:0] to_a, inout [7:0] to_b, input [3:0] m
     always @(posedge clk) begin
         mem[7:0] <= 8'b00000100;
         mem[15:8] <= 8'b10000110; //LDA 0110
-        mem[23:16] <= 8'b01000111; //LDB 0111
+        mem[23:16] <= 8'b01000101; //LDB 0111
         mem[31:24] <= 8'b00100001; //ADD
-        mem[39:32] <= 8'b10011000; //JMP 1000
+        mem[39:32] <= 8'b10010111; //JMP 1000
         mem[47:40] <= 8'b00001110;
         mem[55:48] <= 8'b00001100;
-        mem[63:56] <= 8'b10001000; //LDA 1000
+        mem[63:56] <= 8'b10000111; //LDA 1000
         
         if(reset) begin
             //index <= 0;
@@ -99,10 +99,13 @@ module ram(output [7:0] to_ir, inout [7:0] to_a, inout [7:0] to_b, input [3:0] m
             mem[119:112] <= to_a;
         end
 
-        index_reg <= address_ir * 8;
+
         index_ir <= mar_in * 8;
-        out_reg <= mem[index_reg +: 8];
         out_ir <= mem[index_ir +: 8];
+
+        index_reg <= out_ir[3:0] * 8;
+        out_reg <= mem[index_reg +: 8];
+
     end
 
     assign to_a = (out_a) ? out_reg : 8'bz;
