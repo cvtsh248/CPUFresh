@@ -83,10 +83,11 @@ module ram(output [7:0] to_ir, inout [7:0] to_a, inout [7:0] to_b, input [3:0] m
         mem[15:8] <= 8'b10000110; //LDA 0110
         mem[23:16] <= 8'b01000101; //LDB 0111
         mem[31:24] <= 8'b00100001; //ADD
-        mem[39:32] <= 8'b10010111; //JMP 1000
+        mem[39:32] <= 8'b10010111; //JMP 0111
         mem[47:40] <= 8'b00001110;
         mem[55:48] <= 8'b00001100;
-        mem[63:56] <= 8'b10000111; //LDA 1000
+        mem[63:56] <= 8'b10000101; //LDA 0101
+        mem[71:64] <= 8'b11111111; //HLT
         
         if(reset) begin
             //index <= 0;
@@ -164,8 +165,7 @@ module controller(inout [7:0] bus_i, inout [7:0] bus_d, output reg pc_a, output 
     // Control word: pc_a, mar_a, ir_a, in_a (input to ram), out_a (output from ram), in_b, out_b, ad, sb, jmp
 
     always @(posedge clk) begin
-        stagecount = stagecount + 1;
-        if (stagecount == 6) begin
+        if (ir_i == OP_HLT) begin
             pc_a = 0;
             mar_a = 0;
             ir_a = 0;
@@ -176,179 +176,10 @@ module controller(inout [7:0] bus_i, inout [7:0] bus_d, output reg pc_a, output 
             ad = 0;
             sb = 0;
             jmp = 0;
-            //ctrl_wd = 000;
-            stagecount = 0;
-        end
-        // First 3 stages are always the same
-        if (stagecount == 1) begin
-            pc_a = 1;
-            mar_a = 0;
-            ir_a = 0;
-            in_a = 0;
-            out_a = 0;
-            in_b = 0;
-            out_b = 0;
-            ad = 0;
-            sb = 0;
-            jmp = 0;
-            //ctrl_wd = 110;
-        end
-        if (stagecount == 2) begin
-            pc_a = 0;
-            mar_a = 1;
-            ir_a = 0; //0
-            in_a = 0;
-            out_a = 0;
-            in_b = 0;
-            out_b = 0;
-            jmp = 0;
-            //ctrl_wd = 010;
-        end
-        if (stagecount == 3) begin
-            pc_a = 0;
-            mar_a = 0;
-            ir_a = 1; //1
-            in_a = 0;
-            out_a = 0;
-            in_b = 0;
-            out_b = 0;
-            ad = 0;
-            sb = 0;
-            jmp = 0;
-            //ctrl_wd = 001;
-        end
-        if (ir_i == OP_LDA) begin
-            if (stagecount == 4) begin
-                pc_a = 0;
-                mar_a = 0;
-                ir_a = 0;
-                in_a = 0;
-                out_a = 1;
-                in_b = 0;
-                out_b = 0;
-                ad = 0;
-                sb = 0;
-                jmp = 0;
-            end
-            if (stagecount == 5) begin
-                pc_a = 0;
-                mar_a = 0;
-                ir_a = 0;
-                in_a = 0;
-                out_a = 0;
-                in_b = 0;
-                out_b = 0;
-                ad = 0;
-                sb = 0;
-                jmp = 0;
-            end
-        end 
-        else if (ir_i == OP_LDB) begin
-            if (stagecount == 4) begin
-                pc_a = 0;
-                mar_a = 0;
-                ir_a = 0;
-                in_a = 0;
-                out_a = 0;
-                in_b = 0;
-                out_b = 1;
-                ad = 0;
-                sb = 0;
-                jmp = 0;
-            end
-            if (stagecount == 5) begin
-                pc_a = 0;
-                mar_a = 0;
-                ir_a = 0;
-                in_a = 0;
-                out_a = 0;
-                in_b = 0;
-                out_b = 0;
-                ad = 0;
-                sb = 0;
-                jmp = 0;
-            end
-        end
-        else if (ir_i == OP_ADD) begin
-            if (stagecount == 4) begin
-                pc_a = 0;
-                mar_a = 0;
-                ir_a = 0;
-                in_a = 0;
-                out_a = 0;
-                in_b = 0;
-                out_b = 0;
-                ad = 1;
-                sb = 0;
-                jmp = 0;
-            end
-            if (stagecount == 5) begin
-                pc_a = 0;
-                mar_a = 0;
-                ir_a = 0;
-                in_a = 0;
-                out_a = 0;
-                in_b = 0;
-                out_b = 0;
-                ad = 0;
-                sb = 0;
-                jmp = 0;
-            end
-        end
-        else if (ir_i == OP_SUB) begin
-            if (stagecount == 4) begin
-                pc_a = 0;
-                mar_a = 0;
-                ir_a = 0;
-                in_a = 0;
-                out_a = 0;
-                in_b = 0;
-                out_b = 0;
-                ad = 0;
-                sb = 1;
-                jmp = 0;
-            end
-            if (stagecount == 5) begin
-                pc_a = 0;
-                mar_a = 0;
-                ir_a = 0;
-                in_a = 0;
-                out_a = 0;
-                in_b = 0;
-                out_b = 0;
-                ad = 0;
-                sb = 0;
-                jmp = 0;
-            end
-        end
-        else if (ir_i == OP_JMP) begin
-            if (stagecount == 4) begin
-                pc_a = 0;
-                mar_a = 0;
-                ir_a = 0;
-                in_a = 0;
-                out_a = 0;
-                in_b = 0;
-                out_b = 0;
-                ad = 0;
-                sb = 0;
-                jmp = 1;
-            end
-            if (stagecount == 5) begin
-                pc_a = 0;
-                mar_a = 0;
-                ir_a = 0;
-                in_a = 0;
-                out_a = 0;
-                in_b = 0;
-                out_b = 0;
-                ad = 0;
-                sb = 0;
-                jmp = 0;
-            end
         end
         else begin
-            if (stagecount == 4) begin
+            stagecount = stagecount + 1;
+            if (stagecount == 6) begin
                 pc_a = 0;
                 mar_a = 0;
                 ir_a = 0;
@@ -359,11 +190,14 @@ module controller(inout [7:0] bus_i, inout [7:0] bus_d, output reg pc_a, output 
                 ad = 0;
                 sb = 0;
                 jmp = 0;
+                //ctrl_wd = 000;
+                stagecount = 0;
             end
-            if (stagecount == 5) begin
-                pc_a = 0;
-                mar_a = 0;
-                ir_a = 0;
+            // First 3 stages are always the same
+            if (stagecount == 1) begin
+                pc_a = 1;
+                mar_a = 0; //0
+                ir_a = 0; //0
                 in_a = 0;
                 out_a = 0;
                 in_b = 0;
@@ -371,14 +205,190 @@ module controller(inout [7:0] bus_i, inout [7:0] bus_d, output reg pc_a, output 
                 ad = 0;
                 sb = 0;
                 jmp = 0;
+                //ctrl_wd = 110;
+            end
+            if (stagecount == 2) begin
+                pc_a = 0;
+                mar_a = 1;
+                ir_a = 0; //0
+                in_a = 0;
+                out_a = 0;
+                in_b = 0;
+                out_b = 0;
+                jmp = 0;
+                //ctrl_wd = 010;
+            end
+            if (stagecount == 3) begin
+                pc_a = 0;
+                mar_a = 0;
+                ir_a = 1; //1
+                in_a = 0;
+                out_a = 0;
+                in_b = 0;
+                out_b = 0;
+                ad = 0;
+                sb = 0;
+                jmp = 0;
+                //ctrl_wd = 001;
+            end
+            if (ir_i == OP_LDA) begin
+                if (stagecount == 4) begin
+                    pc_a = 0;
+                    mar_a = 0;
+                    ir_a = 0;
+                    in_a = 0;
+                    out_a = 1;
+                    in_b = 0;
+                    out_b = 0;
+                    ad = 0;
+                    sb = 0;
+                    jmp = 0;
+                end
+                if (stagecount == 5) begin
+                    pc_a = 0;
+                    mar_a = 0;
+                    ir_a = 0;
+                    in_a = 0;
+                    out_a = 0;
+                    in_b = 0;
+                    out_b = 0;
+                    ad = 0;
+                    sb = 0;
+                    jmp = 0;
+                end
+            end 
+            else if (ir_i == OP_LDB) begin
+                if (stagecount == 4) begin
+                    pc_a = 0;
+                    mar_a = 0;
+                    ir_a = 0;
+                    in_a = 0;
+                    out_a = 0;
+                    in_b = 0;
+                    out_b = 1;
+                    ad = 0;
+                    sb = 0;
+                    jmp = 0;
+                end
+                if (stagecount == 5) begin
+                    pc_a = 0;
+                    mar_a = 0;
+                    ir_a = 0;
+                    in_a = 0;
+                    out_a = 0;
+                    in_b = 0;
+                    out_b = 0;
+                    ad = 0;
+                    sb = 0;
+                    jmp = 0;
+                end
+            end
+            else if (ir_i == OP_ADD) begin
+                if (stagecount == 4) begin
+                    pc_a = 0;
+                    mar_a = 0;
+                    ir_a = 0;
+                    in_a = 0;
+                    out_a = 0;
+                    in_b = 0;
+                    out_b = 0;
+                    ad = 1;
+                    sb = 0;
+                    jmp = 0;
+                end
+                if (stagecount == 5) begin
+                    pc_a = 0;
+                    mar_a = 0;
+                    ir_a = 0;
+                    in_a = 0;
+                    out_a = 0;
+                    in_b = 0;
+                    out_b = 0;
+                    ad = 0;
+                    sb = 0;
+                    jmp = 0;
+                end
+            end
+            else if (ir_i == OP_SUB) begin
+                if (stagecount == 4) begin
+                    pc_a = 0;
+                    mar_a = 0;
+                    ir_a = 0;
+                    in_a = 0;
+                    out_a = 0;
+                    in_b = 0;
+                    out_b = 0;
+                    ad = 0;
+                    sb = 1;
+                    jmp = 0;
+                end
+                if (stagecount == 5) begin
+                    pc_a = 0;
+                    mar_a = 0;
+                    ir_a = 0;
+                    in_a = 0;
+                    out_a = 0;
+                    in_b = 0;
+                    out_b = 0;
+                    ad = 0;
+                    sb = 0;
+                    jmp = 0;
+                end
+            end
+            else if (ir_i == OP_JMP) begin
+                if (stagecount == 4) begin
+                    pc_a = 0;
+                    mar_a = 0;
+                    ir_a = 0;
+                    in_a = 0;
+                    out_a = 0;
+                    in_b = 0;
+                    out_b = 0;
+                    ad = 0;
+                    sb = 0;
+                    jmp = 1;
+                end
+                if (stagecount == 5) begin
+                    pc_a = 0;
+                    mar_a = 0;
+                    ir_a = 0;
+                    in_a = 0;
+                    out_a = 0;
+                    in_b = 0;
+                    out_b = 0;
+                    ad = 0;
+                    sb = 0;
+                    jmp = 0;
+                end
+            end
+            else begin
+                if (stagecount == 4) begin
+                    pc_a = 0;
+                    mar_a = 0;
+                    ir_a = 0;
+                    in_a = 0;
+                    out_a = 0;
+                    in_b = 0;
+                    out_b = 0;
+                    ad = 0;
+                    sb = 0;
+                    jmp = 0;
+                end
+                if (stagecount == 5) begin
+                    pc_a = 0;
+                    mar_a = 0;
+                    ir_a = 0;
+                    in_a = 0;
+                    out_a = 0;
+                    in_b = 0;
+                    out_b = 0;
+                    ad = 0;
+                    sb = 0;
+                    jmp = 0;
+                end
             end
         end
-
-
-        
     end
-
-
 endmodule
 
 module top(output [7:0] bus_i, input clk, input reset);
