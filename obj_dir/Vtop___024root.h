@@ -23,8 +23,11 @@ class Vtop___024root final : public VerilatedModule {
     CData/*0:0*/ top__DOT__out_b;
     CData/*0:0*/ top__DOT__in_a;
     CData/*0:0*/ top__DOT__out_a;
+    CData/*0:0*/ top__DOT__ad;
+    CData/*0:0*/ top__DOT__sb;
     CData/*7:0*/ top__DOT__to_a;
     CData/*7:0*/ top__DOT__to_b;
+    CData/*7:0*/ top__DOT__to_acc;
     CData/*2:0*/ top__DOT__control__DOT__stagecount;
     CData/*3:0*/ top__DOT__counter__DOT__pc;
     CData/*3:0*/ top__DOT__mar__DOT__address;
@@ -36,12 +39,14 @@ class Vtop___024root final : public VerilatedModule {
     CData/*3:0*/ top__DOT__ir__DOT__address;
     CData/*7:0*/ top__DOT__areg__DOT__areg;
     CData/*7:0*/ top__DOT__breg__DOT__areg;
+    CData/*7:0*/ top__DOT__accumulator__DOT__areg;
+    CData/*7:0*/ top__DOT__alu__DOT__out;
     CData/*0:0*/ __Vtrigrprev__TOP__clk;
     CData/*0:0*/ __VactContinue;
     VlWide<5>/*128:0*/ top__DOT__ram__DOT__mem;
     IData/*31:0*/ __VstlIterCount;
     IData/*31:0*/ __VactIterCount;
-    VlUnpacked<CData/*0:0*/, 2> __Vm_traceActivity;
+    VlUnpacked<CData/*0:0*/, 3> __Vm_traceActivity;
     VlTriggerVec<1> __VstlTriggered;
     VlTriggerVec<2> __VactTriggered;
     VlTriggerVec<2> __VnbaTriggered;
