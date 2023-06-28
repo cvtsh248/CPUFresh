@@ -164,8 +164,6 @@ module controller(inout [7:0] bus_i, inout [7:0] bus_d, output reg pc_a, output 
     parameter OP_LDB = 4'b0100;
     parameter OP_ADD = 4'b0010;
     parameter OP_SUB = 4'b0001;
-    parameter OP_MUL = 4'b1100;
-    parameter OP_DIV = 4'b1010;
     parameter OP_JMP = 4'b1001;
     parameter OP_HLT = 4'b1111;
     parameter OP_WRT = 4'b1010;

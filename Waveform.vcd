@@ -77,14 +77,12 @@ $timescale 1ps $end
    $upscope $end
    $scope module control $end
     $var wire  4 K OP_ADD [3:0] $end
-    $var wire  4 N OP_DIV [3:0] $end
-    $var wire  4 P OP_HLT [3:0] $end
-    $var wire  4 O OP_JMP [3:0] $end
+    $var wire  4 N OP_HLT [3:0] $end
+    $var wire  4 M OP_JMP [3:0] $end
     $var wire  4 I OP_LDA [3:0] $end
     $var wire  4 J OP_LDB [3:0] $end
-    $var wire  4 M OP_MUL [3:0] $end
     $var wire  4 L OP_SUB [3:0] $end
-    $var wire  4 N OP_WRT [3:0] $end
+    $var wire  4 O OP_WRT [3:0] $end
     $var wire  1 + acc_out $end
     $var wire  1 , ad $end
     $var wire  1 G aflag $end
@@ -131,7 +129,7 @@ $timescale 1ps $end
     $var wire  4 4 from_ir [3:0] $end
     $var wire  1 & jmp $end
     $var wire  1 $ mar_a $end
-    $var wire  4 Q offset [3:0] $end
+    $var wire  4 P offset [3:0] $end
     $var wire  1 E reset $end
     $var wire  4 / to_ram [3:0] $end
    $upscope $end
@@ -199,11 +197,10 @@ b1000 I
 b0100 J
 b0010 K
 b0001 L
-b1100 M
-b1010 N
-b1001 O
-b1111 P
-b0000 Q
+b1001 M
+b1111 N
+b1010 O
+b0000 P
 #1
 0D
 #2
