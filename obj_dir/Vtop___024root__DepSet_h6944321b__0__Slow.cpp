@@ -32,6 +32,7 @@ VL_ATTR_COLD void Vtop___024root___eval_static__TOP(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__out_b = 0U;
     vlSelf->top__DOT__in_a = 0U;
     vlSelf->top__DOT__out_a = 0U;
+    vlSelf->top__DOT__acc_out = 0U;
     vlSelf->top__DOT__ad = 0U;
     vlSelf->top__DOT__sb = 0U;
     vlSelf->top__DOT__control__DOT__stagecount = 0U;
@@ -75,7 +76,7 @@ VL_ATTR_COLD void Vtop___024root___eval_settle(Vtop___024root* vlSelf) {
 #ifdef VL_DEBUG
                 Vtop___024root___dump_triggers__stl(vlSelf);
 #endif
-                VL_FATAL_MT("cpuf.v", 402, "", "Settle region did not converge.");
+                VL_FATAL_MT("cpuf.v", 451, "", "Settle region did not converge.");
             }
             vlSelf->__VstlIterCount = ((IData)(1U) 
                                        + vlSelf->__VstlIterCount);
@@ -117,13 +118,6 @@ VL_ATTR_COLD void Vtop___024root___stl_sequent__TOP__0(Vtop___024root* vlSelf) {
                                                    ? (IData)(vlSelf->top__DOT__ram__DOT__out_reg)
                                                    : 0U) 
                                                  & ((IData)(vlSelf->top__DOT__out_a)
-                                                     ? 0xffU
-                                                     : 0U)));
-    vlSelf->top__DOT__to_b = (((IData)(vlSelf->top__DOT__out_b)
-                                ? 0xffU : 0U) & (((IData)(vlSelf->top__DOT__out_b)
-                                                   ? (IData)(vlSelf->top__DOT__ram__DOT__out_reg)
-                                                   : 0U) 
-                                                 & ((IData)(vlSelf->top__DOT__out_b)
                                                      ? 0xffU
                                                      : 0U)));
 }
@@ -193,10 +187,10 @@ VL_ATTR_COLD void Vtop___024root___ctor_var_reset(Vtop___024root* vlSelf) {
     vlSelf->top__DOT__out_b = VL_RAND_RESET_I(1);
     vlSelf->top__DOT__in_a = VL_RAND_RESET_I(1);
     vlSelf->top__DOT__out_a = VL_RAND_RESET_I(1);
+    vlSelf->top__DOT__acc_out = VL_RAND_RESET_I(1);
     vlSelf->top__DOT__ad = VL_RAND_RESET_I(1);
     vlSelf->top__DOT__sb = VL_RAND_RESET_I(1);
     vlSelf->top__DOT__to_a = VL_RAND_RESET_I(8);
-    vlSelf->top__DOT__to_b = VL_RAND_RESET_I(8);
     vlSelf->top__DOT__to_acc = VL_RAND_RESET_I(8);
     vlSelf->top__DOT__control__DOT__stagecount = VL_RAND_RESET_I(3);
     vlSelf->top__DOT__counter__DOT__pc = VL_RAND_RESET_I(4);
