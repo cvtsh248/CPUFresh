@@ -32,6 +32,7 @@ class Vtop___024root final : public VerilatedModule {
     CData/*2:0*/ top__DOT__control__DOT__stagecount;
     CData/*3:0*/ top__DOT__counter__DOT__pc;
     CData/*3:0*/ top__DOT__mar__DOT__address;
+    CData/*3:0*/ top__DOT__mar__DOT__offset;
     CData/*7:0*/ top__DOT__ram__DOT__index_ir;
     CData/*7:0*/ top__DOT__ram__DOT__index_reg;
     CData/*7:0*/ top__DOT__ram__DOT__out_reg;

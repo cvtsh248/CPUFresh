@@ -113,6 +113,8 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBit(c+33,"clk", false,-1);
     tracep->declBit(c+34,"reset", false,-1);
     tracep->declBit(c+1,"pc_a", false,-1);
+    tracep->declBus(c+17,"from_ir", false,-1, 3,0);
+    tracep->declBit(c+4,"jmp", false,-1);
     tracep->declBus(c+20,"pc", false,-1, 3,0);
     tracep->popNamePrefix(1);
     tracep->pushNamePrefix("ir ");
@@ -135,6 +137,7 @@ VL_ATTR_COLD void Vtop___024root__trace_init_sub__TOP__0(Vtop___024root* vlSelf,
     tracep->declBit(c+2,"mar_a", false,-1);
     tracep->declBit(c+4,"jmp", false,-1);
     tracep->declBus(c+12,"address", false,-1, 3,0);
+    tracep->declBus(c+46,"offset", false,-1, 3,0);
     tracep->popNamePrefix(1);
     tracep->pushNamePrefix("ram ");
     tracep->declBus(c+13,"to_ir", false,-1, 7,0);
@@ -237,4 +240,5 @@ VL_ATTR_COLD void Vtop___024root__trace_full_sub_0(Vtop___024root* vlSelf, Veril
     bufp->fullCData(oldp+43,(0xaU),4);
     bufp->fullCData(oldp+44,(9U),4);
     bufp->fullCData(oldp+45,(0xfU),4);
+    bufp->fullCData(oldp+46,(vlSelf->top__DOT__mar__DOT__offset),4);
 }
