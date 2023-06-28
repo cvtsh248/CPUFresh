@@ -84,6 +84,7 @@ module ram(output [7:0] to_ir, inout [7:0] to_a, inout [7:0] to_b, inout [7:0] t
     reg [7:0] out_ir;
 
     always @(posedge clk) begin
+        // Contents of RAM, including data and the program itself
         mem[7:0] <= 8'b00000100;
         mem[15:8] <= 8'b10000110; //LDA 0110
         mem[23:16] <= 8'b01000101; //LDB 0111
