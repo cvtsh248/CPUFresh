@@ -1,6 +1,6 @@
 # CPUFresh
 
-Work in progress 8 bit CPU, designed in verilog, and simulated via verilator. 
+Work in progress 8 bit CPU, designed in verilog, and simulated via verilator. As of now, programs are entered by directly directly adding values to the RAM in code.
 
 # Current instruction set
 
