@@ -31,5 +31,4 @@ For instance, the instruction ``10000110`` would load the value stored at ``0110
 # Todo
 * Write an assembler
 * Test on actual FPGA hardware
-* Find a better way to load a program into the device, rather than directly editing the RAM's contents in code.
 * Add additional instructions (Multiplication, division, and compare)
