@@ -28,6 +28,10 @@ Where the address points to a certain location in memory.
 
 For instance, the instruction ``10000110`` would load the value stored at ``0110`` in memory into register A.
 
+# Running the simulator
+
+Ensure verilator (at least v5.006) is installed, and run ``instruct.sh``. To edit simulation parameters, edit ``testbench.cpp``, and refer to verilator's documentation.
+
 # Todo
 * Write an assembler
 * Test on actual FPGA hardware
