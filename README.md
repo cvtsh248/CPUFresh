@@ -28,11 +28,12 @@ Where the address points to a certain location in memory.
 
 For instance, the instruction ``10000110`` would load the value stored at ``0110`` in memory into register A.
 
-# Running the simulator
+# Running the simulation
 
-Ensure verilator (at least v5.006) is installed, and run ``instruct.sh``. To edit simulation parameters, edit ``testbench.cpp``, and refer to verilator's documentation.
+Ensure verilator (at least v5.006) is installed, and run ``instruct.sh``. To edit simulation parameters, edit ``testbench.cpp``, and refer to verilator's documentation. A waveform file called ``Waveform.vcd`` will be updated/created upon running ``instruct.sh``. This file can be viewed using GTKWave. Any signal within the ``cpuf.v`` file can be viewed from ``Waveform.vcd``.
 
 # Todo
+* Add output register, and output instruction
 * Write an assembler
 * Test on actual FPGA hardware
 * Add additional instructions (Multiplication, division, and compare)
