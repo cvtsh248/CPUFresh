@@ -154,10 +154,9 @@ module alu(output reg [7:0] to_acc, inout [7:0] bus_d, input [7:0] from_a, input
             out <= from_a + from_b;
         if(sub)
             out <= from_a - from_b;
-    
+    end
     assign to_acc = (1) ? out : 8'bz; //ad || sub
 
-    end
 
 endmodule
 

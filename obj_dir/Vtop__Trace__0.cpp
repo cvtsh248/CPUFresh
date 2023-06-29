@@ -46,22 +46,21 @@ void Vtop___024root__trace_chg_sub_0(Vtop___024root* vlSelf, VerilatedVcd::Buffe
         bufp->chgCData(oldp+17,(vlSelf->top__DOT__cpu__DOT__ir__DOT__instruction),4);
         bufp->chgCData(oldp+18,(vlSelf->top__DOT__cpu__DOT__mar__DOT__address),4);
         bufp->chgCData(oldp+19,(vlSelf->top__DOT__cpu__DOT__ram__DOT__out_ir),8);
-        bufp->chgCData(oldp+20,(vlSelf->top__DOT__cpu__DOT__to_acc),8);
+        bufp->chgCData(oldp+20,(vlSelf->top__DOT__cpu__DOT__alu__DOT__out),8);
         bufp->chgCData(oldp+21,(vlSelf->top__DOT__cpu__DOT__ir__DOT__address),4);
-        bufp->chgCData(oldp+22,(vlSelf->top__DOT__cpu__DOT__alu__DOT__out),8);
-        bufp->chgCData(oldp+23,(vlSelf->top__DOT__cpu__DOT__bus_i__out__strong__out23),8);
-        bufp->chgCData(oldp+24,(vlSelf->top__DOT__cpu__DOT__counter__DOT__pc),4);
-        bufp->chgWData(oldp+25,(vlSelf->top__DOT__cpu__DOT__ram__DOT__mem),129);
-        bufp->chgCData(oldp+30,(vlSelf->top__DOT__cpu__DOT__ram__DOT__index_ir),8);
-        bufp->chgCData(oldp+31,(vlSelf->top__DOT__cpu__DOT__ram__DOT__index_reg),8);
-        bufp->chgCData(oldp+32,(vlSelf->top__DOT__cpu__DOT__ram__DOT__out_reg),8);
+        bufp->chgCData(oldp+22,(vlSelf->top__DOT__cpu__DOT__bus_i__out__strong__out23),8);
+        bufp->chgCData(oldp+23,(vlSelf->top__DOT__cpu__DOT__counter__DOT__pc),4);
+        bufp->chgWData(oldp+24,(vlSelf->top__DOT__cpu__DOT__ram__DOT__mem),129);
+        bufp->chgCData(oldp+29,(vlSelf->top__DOT__cpu__DOT__ram__DOT__index_ir),8);
+        bufp->chgCData(oldp+30,(vlSelf->top__DOT__cpu__DOT__ram__DOT__index_reg),8);
+        bufp->chgCData(oldp+31,(vlSelf->top__DOT__cpu__DOT__ram__DOT__out_reg),8);
     }
-    bufp->chgCData(oldp+33,(vlSelf->led_1),8);
-    bufp->chgCData(oldp+34,(vlSelf->led_2),8);
-    bufp->chgBit(oldp+35,(vlSelf->clk));
-    bufp->chgBit(oldp+36,(vlSelf->reset));
-    bufp->chgCData(oldp+37,(vlSelf->top__DOT__cpu__DOT__to_a),8);
-    bufp->chgCData(oldp+38,((((IData)(vlSelf->top__DOT__cpu__DOT__out_b)
+    bufp->chgCData(oldp+32,(vlSelf->led_1),8);
+    bufp->chgCData(oldp+33,(vlSelf->led_2),8);
+    bufp->chgBit(oldp+34,(vlSelf->clk));
+    bufp->chgBit(oldp+35,(vlSelf->reset));
+    bufp->chgCData(oldp+36,(vlSelf->top__DOT__cpu__DOT__to_a),8);
+    bufp->chgCData(oldp+37,((((IData)(vlSelf->top__DOT__cpu__DOT__out_b)
                                ? 0xffU : 0U) & (((IData)(vlSelf->top__DOT__cpu__DOT__out_b)
                                                   ? (IData)(vlSelf->top__DOT__cpu__DOT__ram__DOT__out_reg)
                                                   : 0U) 

@@ -37,10 +37,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
     CData/*6:0*/ __Vtableidx1;
     __Vtableidx1 = 0;
     // Body
-    if (vlSelf->top__DOT__cpu__DOT__out_a) {
-        vlSelf->top__DOT__cpu__DOT__areg__DOT__areg 
-            = vlSelf->top__DOT__cpu__DOT__to_a;
-    }
     if (vlSelf->top__DOT__cpu__DOT__out_b) {
         vlSelf->top__DOT__cpu__DOT__breg__DOT__areg 
             = (((IData)(vlSelf->top__DOT__cpu__DOT__out_b)
@@ -51,7 +47,11 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__0(Vtop___024root* vlSelf) 
                                               : 0U)));
     }
     vlSelf->top__DOT__cpu__DOT__accumulator__DOT__areg 
-        = vlSelf->top__DOT__cpu__DOT__to_acc;
+        = vlSelf->top__DOT__cpu__DOT__alu__DOT__out;
+    if (vlSelf->top__DOT__cpu__DOT__out_a) {
+        vlSelf->top__DOT__cpu__DOT__areg__DOT__areg 
+            = vlSelf->top__DOT__cpu__DOT__to_a;
+    }
     __Vtableidx1 = (((IData)(vlSelf->top__DOT__cpu__DOT__control__DOT__stagecount) 
                      << 4U) | (IData)(vlSelf->top__DOT__cpu__DOT__ir__DOT__instruction));
     if ((1U & Vtop__ConstPool__TABLE_h16c13ed9_0[__Vtableidx1])) {
@@ -155,7 +155,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
     // Body
     __Vdly__top__DOT__cpu__DOT__counter__DOT__pc = vlSelf->top__DOT__cpu__DOT__counter__DOT__pc;
     __Vdly__top__DOT__cpu__DOT__ram__DOT__out_ir = vlSelf->top__DOT__cpu__DOT__ram__DOT__out_ir;
-    vlSelf->top__DOT__cpu__DOT__to_acc = vlSelf->top__DOT__cpu__DOT__alu__DOT__out;
     if (vlSelf->reset) {
         __Vdly__top__DOT__cpu__DOT__counter__DOT__pc = 0U;
         vlSelf->top__DOT__cpu__DOT__ir__DOT__instruction = 0U;
@@ -202,7 +201,6 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                          ((IData)(vlSelf->top__DOT__cpu__DOT__ram__DOT__index_reg) 
                           >> 5U)] >> (0x1fU & (IData)(vlSelf->top__DOT__cpu__DOT__ram__DOT__index_reg)))))
           : 0U);
-    vlSelf->top__DOT__cpu__DOT__counter__DOT__pc = __Vdly__top__DOT__cpu__DOT__counter__DOT__pc;
     if (vlSelf->top__DOT__cpu__DOT__ad) {
         vlSelf->top__DOT__cpu__DOT__alu__DOT__out = 
             (0xffU & ((IData)(vlSelf->top__DOT__cpu__DOT__areg__DOT__areg) 
@@ -213,17 +211,18 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
             (0xffU & ((IData)(vlSelf->top__DOT__cpu__DOT__areg__DOT__areg) 
                       - (IData)(vlSelf->top__DOT__cpu__DOT__breg__DOT__areg)));
     }
+    vlSelf->top__DOT__cpu__DOT__counter__DOT__pc = __Vdly__top__DOT__cpu__DOT__counter__DOT__pc;
     vlSelf->top__DOT__cpu__DOT__ram__DOT__index_reg 
         = (0x78U & ((IData)(vlSelf->top__DOT__cpu__DOT__ram__DOT__out_ir) 
+                    << 3U));
+    vlSelf->top__DOT__cpu__DOT__ram__DOT__index_ir 
+        = (0xffU & ((IData)(vlSelf->top__DOT__cpu__DOT__mar__DOT__address) 
                     << 3U));
     vlSelf->top__DOT__cpu__DOT__ram__DOT__mem[0U] = 0x21458604U;
     vlSelf->top__DOT__cpu__DOT__ram__DOT__mem[1U] = 0x860c0e97U;
     vlSelf->top__DOT__cpu__DOT__ram__DOT__mem[2U] = 0xbf8fa686U;
     vlSelf->top__DOT__cpu__DOT__ram__DOT__mem[3U] = 
         (0xffU | (0xffffff00U & vlSelf->top__DOT__cpu__DOT__ram__DOT__mem[3U]));
-    vlSelf->top__DOT__cpu__DOT__ram__DOT__index_ir 
-        = (0xffU & ((IData)(vlSelf->top__DOT__cpu__DOT__mar__DOT__address) 
-                    << 3U));
     if (vlSelf->top__DOT__cpu__DOT__mar_a) {
         vlSelf->top__DOT__cpu__DOT__mar__DOT__address 
             = (0xfU & (IData)(vlSelf->led_2));
@@ -318,7 +317,7 @@ void Vtop___024root___eval(Vtop___024root* vlSelf) {
 #ifdef VL_DEBUG
                     Vtop___024root___dump_triggers__act(vlSelf);
 #endif
-                    VL_FATAL_MT("cpuf.v", 613, "", "Active region did not converge.");
+                    VL_FATAL_MT("cpuf.v", 612, "", "Active region did not converge.");
                 }
                 vlSelf->__VactIterCount = ((IData)(1U) 
                                            + vlSelf->__VactIterCount);
@@ -333,7 +332,7 @@ void Vtop___024root___eval(Vtop___024root* vlSelf) {
 #ifdef VL_DEBUG
                 Vtop___024root___dump_triggers__nba(vlSelf);
 #endif
-                VL_FATAL_MT("cpuf.v", 613, "", "NBA region did not converge.");
+                VL_FATAL_MT("cpuf.v", 612, "", "NBA region did not converge.");
             }
             __VnbaIterCount = ((IData)(1U) + __VnbaIterCount);
             Vtop___024root___eval_nba(vlSelf);
