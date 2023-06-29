@@ -16,7 +16,7 @@
 // OP_DMB : 1011 => Dump B register into data bus
 
 // STUFF ON Instruction Bus
-module program_counter(inout [7:0] bus_i, input clk, input reset, input pc_a, input [3:0] from_ir, input jmp);
+module program_counter(output reg [7:0] bus_i, input clk, input reset, input pc_a, input [3:0] from_ir, input jmp);
     
     reg [3:0] pc;
     
@@ -27,9 +27,12 @@ module program_counter(inout [7:0] bus_i, input clk, input reset, input pc_a, in
             pc <= pc + 1; 
         else if (jmp)
             pc <= from_ir - 4'b0001;
+
+        if (pc_a)
+         bus_i <= {4'b0,pc};
     end
 
-    assign bus_i = (pc_a) ? {4'bz,pc} : 8'bz;
+    //assign bus_i = (pc_a) ? {4'bz,pc} : 8'bz;
 
 endmodule
 
@@ -177,374 +180,374 @@ module controller(inout [7:0] bus_i, inout [7:0] bus_d, output reg pc_a, output 
 
     // Control word: pc_a, mar_a, ir_a, in_a (input to ram), out_a (output from ram), in_b, out_b, ad, sb, jmp, acc_out, a_out_bus, b_out_bus
 
-    always @(posedge clk) begin
+    always @(negedge clk) begin
         if (ir_i == OP_HLT) begin
-            pc_a = 0;
-            mar_a = 0;
-            ir_a = 0;
-            in_a = 0;
-            out_a = 0;
-            in_b = 0;
-            out_b = 0;
-            ad = 0;
-            sb = 0;
-            jmp = 0;
-            acc_out = 0;
+            pc_a <= 0;
+            mar_a <= 0;
+            ir_a <= 0;
+            in_a <= 0;
+            out_a <= 0;
+            in_b <= 0;
+            out_b <= 0;
+            ad <= 0;
+            sb <= 0;
+            jmp <= 0;
+            acc_out <= 0;
         end
         else begin
-            stagecount = stagecount + 1;
-            if (stagecount == 6) begin
-                pc_a = 0;
-                mar_a = 0;
-                ir_a = 0;
-                in_a = 0;
-                out_a = 0;
-                in_b = 0;
-                out_b = 0;
-                ad = 0;
-                sb = 0;
-                jmp = 0;
-                acc_out = 0;
-                //a_out_bus = 0;
-                //b_out_bus = 0;
-                //ctrl_wd = 000;
-                stagecount = 0;
+            stagecount <= stagecount + 1;
+            if (stagecount == 5) begin
+                pc_a <= 0;
+                mar_a <= 0;
+                ir_a <= 0;
+                in_a <= 0;
+                out_a <= 0;
+                in_b <= 0;
+                out_b <= 0;
+                ad <= 0;
+                sb <= 0;
+                jmp <= 0;
+                acc_out <= 0;
+                //a_out_bus <= 0;
+                //b_out_bus <= 0;
+                //ctrl_wd <= 000;
+                stagecount <= 0;
             end
             // First 3 stages are always the same
+            if (stagecount == 0) begin
+                pc_a <= 1;
+                mar_a <= 0; //0
+                ir_a <= 0; //0
+                in_a <= 0;
+                out_a <= 0;
+                in_b <= 0;
+                out_b <= 0;
+                ad <= 0;
+                sb <= 0;
+                jmp <= 0;
+                acc_out <= 0;
+                //a_out_bus <= 0;
+                //b_out_bus <= 0;
+                //ctrl_wd <= 110;
+            end
             if (stagecount == 1) begin
-                pc_a = 1;
-                mar_a = 0; //0
-                ir_a = 0; //0
-                in_a = 0;
-                out_a = 0;
-                in_b = 0;
-                out_b = 0;
-                ad = 0;
-                sb = 0;
-                jmp = 0;
-                acc_out = 0;
-                //a_out_bus = 0;
-                //b_out_bus = 0;
-                //ctrl_wd = 110;
+                pc_a <= 0;
+                mar_a <= 1;
+                ir_a <= 0; //0
+                in_a <= 0;
+                out_a <= 0;
+                in_b <= 0;
+                out_b <= 0;
+                jmp <= 0;
+                acc_out <= 0;
+                //a_out_bus <= 0;
+                //b_out_bus <= 0;
+                //ctrl_wd <= 010;
             end
             if (stagecount == 2) begin
-                pc_a = 0;
-                mar_a = 1;
-                ir_a = 0; //0
-                in_a = 0;
-                out_a = 0;
-                in_b = 0;
-                out_b = 0;
-                jmp = 0;
-                acc_out = 0;
-                //a_out_bus = 0;
-                //b_out_bus = 0;
-                //ctrl_wd = 010;
-            end
-            if (stagecount == 3) begin
-                pc_a = 0;
-                mar_a = 0;
-                ir_a = 1; //1
-                in_a = 0;
-                out_a = 0;
-                in_b = 0;
-                out_b = 0;
-                ad = 0;
-                sb = 0;
-                jmp = 0;
-                acc_out = 0;
-                //a_out_bus = 0;
-                //b_out_bus = 0;
-                //ctrl_wd = 001;
+                pc_a <= 0;
+                mar_a <= 0;
+                ir_a <= 1; //1
+                in_a <= 0;
+                out_a <= 0;
+                in_b <= 0;
+                out_b <= 0;
+                ad <= 0;
+                sb <= 0;
+                jmp <= 0;
+                acc_out <= 0;
+                //a_out_bus <= 0;
+                //b_out_bus <= 0;
+                //ctrl_wd <= 001;
             end
             if (ir_i == OP_JMP) begin
-                if (stagecount == 4) begin
-                    pc_a = 0;
-                    mar_a = 0;
-                    ir_a = 0;
-                    in_a = 0;
-                    out_a = 0;
-                    in_b = 0;
-                    out_b = 0;
-                    ad = 0;
-                    sb = 0;
-                    jmp = 1;
-                    acc_out = 0;
-                    a_out_bus = 0;
-                    b_out_bus = 0;
+                if (stagecount == 3) begin
+                    pc_a <= 0;
+                    mar_a <= 0;
+                    ir_a <= 0;
+                    in_a <= 0;
+                    out_a <= 0;
+                    in_b <= 0;
+                    out_b <= 0;
+                    ad <= 0;
+                    sb <= 0;
+                    jmp <= 1;
+                    acc_out <= 0;
+                    a_out_bus <= 0;
+                    b_out_bus <= 0;
                 end
-                if (stagecount == 5) begin
-                    pc_a = 0;
-                    mar_a = 0;
-                    ir_a = 0;
-                    in_a = 0;
-                    out_a = 0;
-                    in_b = 0;
-                    out_b = 0;
-                    ad = 0;
-                    sb = 0;
-                    jmp = 0;
-                    acc_out = 0;
-                    a_out_bus = 0;
-                    b_out_bus = 0;
+                if (stagecount == 4) begin
+                    pc_a <= 0;
+                    mar_a <= 0;
+                    ir_a <= 0;
+                    in_a <= 0;
+                    out_a <= 0;
+                    in_b <= 0;
+                    out_b <= 0;
+                    ad <= 0;
+                    sb <= 0;
+                    jmp <= 0;
+                    acc_out <= 0;
+                    a_out_bus <= 0;
+                    b_out_bus <= 0;
                 end
 
             end
             else begin
                 if (ir_i == OP_LDA) begin
-                    if (stagecount == 4) begin
-                        pc_a = 0;
-                        mar_a = 0;
-                        ir_a = 0;
-                        in_a = 0;
-                        out_a = 1;
-                        in_b = 0;
-                        out_b = 0;
-                        ad = 0;
-                        sb = 0;
-                        jmp = 0;
-                        acc_out = 0;
-                        a_out_bus = 0;
-                        b_out_bus = 0;
+                    if (stagecount == 3) begin
+                        pc_a <= 0;
+                        mar_a <= 0;
+                        ir_a <= 0;
+                        in_a <= 0;
+                        out_a <= 1;
+                        in_b <= 0;
+                        out_b <= 0;
+                        ad <= 0;
+                        sb <= 0;
+                        jmp <= 0;
+                        acc_out <= 0;
+                        a_out_bus <= 0;
+                        b_out_bus <= 0;
                     end
-                    if (stagecount == 5) begin
-                        pc_a = 0;
-                        mar_a = 0;
-                        ir_a = 0;
-                        in_a = 0;
-                        out_a = 0;
-                        in_b = 0;
-                        out_b = 0;
-                        ad = 0;
-                        sb = 0;
-                        jmp = 0;
-                        acc_out = 0;
-                        a_out_bus = 0;
-                        b_out_bus = 0;
+                    if (stagecount == 4) begin
+                        pc_a <= 0;
+                        mar_a <= 0;
+                        ir_a <= 0;
+                        in_a <= 0;
+                        out_a <= 0;
+                        in_b <= 0;
+                        out_b <= 0;
+                        ad <= 0;
+                        sb <= 0;
+                        jmp <= 0;
+                        acc_out <= 0;
+                        a_out_bus <= 0;
+                        b_out_bus <= 0;
                     end
                 end 
                 else if (ir_i == OP_LDB) begin
-                    if (stagecount == 4) begin
-                        pc_a = 0;
-                        mar_a = 0;
-                        ir_a = 0;
-                        in_a = 0;
-                        out_a = 0;
-                        in_b = 0;
-                        out_b = 1;
-                        ad = 0;
-                        sb = 0;
-                        jmp = 0;
-                        acc_out = 0;
-                        a_out_bus = 0;
-                        b_out_bus = 0;
+                    if (stagecount == 3) begin
+                        pc_a <= 0;
+                        mar_a <= 0;
+                        ir_a <= 0;
+                        in_a <= 0;
+                        out_a <= 0;
+                        in_b <= 0;
+                        out_b <= 1;
+                        ad <= 0;
+                        sb <= 0;
+                        jmp <= 0;
+                        acc_out <= 0;
+                        a_out_bus <= 0;
+                        b_out_bus <= 0;
                     end
-                    if (stagecount == 5) begin
-                        pc_a = 0;
-                        mar_a = 0;
-                        ir_a = 0;
-                        in_a = 0;
-                        out_a = 0;
-                        in_b = 0;
-                        out_b = 0;
-                        ad = 0;
-                        sb = 0;
-                        jmp = 0;
-                        acc_out = 0;
-                        a_out_bus = 0;
-                        b_out_bus = 0;
+                    if (stagecount == 4) begin
+                        pc_a <= 0;
+                        mar_a <= 0;
+                        ir_a <= 0;
+                        in_a <= 0;
+                        out_a <= 0;
+                        in_b <= 0;
+                        out_b <= 0;
+                        ad <= 0;
+                        sb <= 0;
+                        jmp <= 0;
+                        acc_out <= 0;
+                        a_out_bus <= 0;
+                        b_out_bus <= 0;
                     end
                 end
                 else if (ir_i == OP_ADD) begin
-                    if (stagecount == 4) begin
-                        pc_a = 0;
-                        mar_a = 0;
-                        ir_a = 0;
-                        in_a = 0;
-                        out_a = 0;
-                        in_b = 0;
-                        out_b = 0;
-                        ad = 1;
-                        sb = 0;
-                        jmp = 0;
-                        acc_out = 0;
-                        a_out_bus = 0;
-                        b_out_bus = 0;
+                    if (stagecount == 3) begin
+                        pc_a <= 0;
+                        mar_a <= 0;
+                        ir_a <= 0;
+                        in_a <= 0;
+                        out_a <= 0;
+                        in_b <= 0;
+                        out_b <= 0;
+                        ad <= 1;
+                        sb <= 0;
+                        jmp <= 0;
+                        acc_out <= 0;
+                        a_out_bus <= 0;
+                        b_out_bus <= 0;
                     end
-                    if (stagecount == 5) begin
-                        pc_a = 0;
-                        mar_a = 0;
-                        ir_a = 0;
-                        in_a = 0;
-                        out_a = 0;
-                        in_b = 0;
-                        out_b = 0;
-                        ad = 0;
-                        sb = 0;
-                        jmp = 0;
-                        acc_out = 0;
-                        a_out_bus = 0;
-                        b_out_bus = 0;
+                    if (stagecount == 4) begin
+                        pc_a <= 0;
+                        mar_a <= 0;
+                        ir_a <= 0;
+                        in_a <= 0;
+                        out_a <= 0;
+                        in_b <= 0;
+                        out_b <= 0;
+                        ad <= 0;
+                        sb <= 0;
+                        jmp <= 0;
+                        acc_out <= 0;
+                        a_out_bus <= 0;
+                        b_out_bus <= 0;
                     end
                 end
                 else if (ir_i == OP_SUB) begin
-                    if (stagecount == 4) begin
-                        pc_a = 0;
-                        mar_a = 0;
-                        ir_a = 0;
-                        in_a = 0;
-                        out_a = 0;
-                        in_b = 0;
-                        out_b = 0;
-                        ad = 0;
-                        sb = 1;
-                        jmp = 0;
-                        acc_out = 0;
-                        a_out_bus = 0;
-                        b_out_bus = 0;
+                    if (stagecount == 3) begin
+                        pc_a <= 0;
+                        mar_a <= 0;
+                        ir_a <= 0;
+                        in_a <= 0;
+                        out_a <= 0;
+                        in_b <= 0;
+                        out_b <= 0;
+                        ad <= 0;
+                        sb <= 1;
+                        jmp <= 0;
+                        acc_out <= 0;
+                        a_out_bus <= 0;
+                        b_out_bus <= 0;
                     end
-                    if (stagecount == 5) begin
-                        pc_a = 0;
-                        mar_a = 0;
-                        ir_a = 0;
-                        in_a = 0;
-                        out_a = 0;
-                        in_b = 0;
-                        out_b = 0;
-                        ad = 0;
-                        sb = 0;
-                        jmp = 0;
-                        acc_out = 0;
-                        a_out_bus = 0;
-                        b_out_bus = 0;
+                    if (stagecount == 4) begin
+                        pc_a <= 0;
+                        mar_a <= 0;
+                        ir_a <= 0;
+                        in_a <= 0;
+                        out_a <= 0;
+                        in_b <= 0;
+                        out_b <= 0;
+                        ad <= 0;
+                        sb <= 0;
+                        jmp <= 0;
+                        acc_out <= 0;
+                        a_out_bus <= 0;
+                        b_out_bus <= 0;
                     end
                 end
                 else if (ir_i == OP_WRT) begin
-                    if (stagecount == 4) begin
-                        pc_a = 0;
-                        mar_a = 0;
-                        ir_a = 0;
-                        in_a = 0;
-                        out_a = 0;
-                        in_b = 0;
-                        out_b = 0;
-                        ad = 0;
-                        sb = 0;
-                        jmp = 0;
-                        acc_out = 1;
-                        a_out_bus = 0;
-                        b_out_bus = 0;
+                    if (stagecount == 3) begin
+                        pc_a <= 0;
+                        mar_a <= 0;
+                        ir_a <= 0;
+                        in_a <= 0;
+                        out_a <= 0;
+                        in_b <= 0;
+                        out_b <= 0;
+                        ad <= 0;
+                        sb <= 0;
+                        jmp <= 0;
+                        acc_out <= 1;
+                        a_out_bus <= 0;
+                        b_out_bus <= 0;
                     end
-                    if (stagecount == 5) begin
-                        pc_a = 0;
-                        mar_a = 0;
-                        ir_a = 0;
-                        in_a = 0;
-                        out_a = 0;
-                        in_b = 0;
-                        out_b = 0;
-                        ad = 0;
-                        sb = 0;
-                        jmp = 0;
-                        acc_out = 0;
-                        a_out_bus = 0;
-                        b_out_bus = 0;
+                    if (stagecount == 4) begin
+                        pc_a <= 0;
+                        mar_a <= 0;
+                        ir_a <= 0;
+                        in_a <= 0;
+                        out_a <= 0;
+                        in_b <= 0;
+                        out_b <= 0;
+                        ad <= 0;
+                        sb <= 0;
+                        jmp <= 0;
+                        acc_out <= 0;
+                        a_out_bus <= 0;
+                        b_out_bus <= 0;
                     end
                 end
                 else if (ir_i == OP_DMA) begin
-                    if (stagecount == 4) begin
-                        pc_a = 0;
-                        mar_a = 0;
-                        ir_a = 0;
-                        in_a = 0;
-                        out_a = 0;
-                        in_b = 0;
-                        out_b = 0;
-                        ad = 0;
-                        sb = 0;
-                        jmp = 0;
-                        acc_out = 0;
-                        a_out_bus = 1;
-                        b_out_bus = 0;
+                    if (stagecount == 3) begin
+                        pc_a <= 0;
+                        mar_a <= 0;
+                        ir_a <= 0;
+                        in_a <= 0;
+                        out_a <= 0;
+                        in_b <= 0;
+                        out_b <= 0;
+                        ad <= 0;
+                        sb <= 0;
+                        jmp <= 0;
+                        acc_out <= 0;
+                        a_out_bus <= 1;
+                        b_out_bus <= 0;
                     end
-                    if (stagecount == 5) begin
-                        pc_a = 0;
-                        mar_a = 0;
-                        ir_a = 0;
-                        in_a = 0;
-                        out_a = 0;
-                        in_b = 0;
-                        out_b = 0;
-                        ad = 0;
-                        sb = 0;
-                        jmp = 0;
-                        acc_out = 0;
-                        a_out_bus = 1;
-                        b_out_bus = 0;
+                    if (stagecount == 4) begin
+                        pc_a <= 0;
+                        mar_a <= 0;
+                        ir_a <= 0;
+                        in_a <= 0;
+                        out_a <= 0;
+                        in_b <= 0;
+                        out_b <= 0;
+                        ad <= 0;
+                        sb <= 0;
+                        jmp <= 0;
+                        acc_out <= 0;
+                        a_out_bus <= 1;
+                        b_out_bus <= 0;
                     end
                 end
                 else if (ir_i == OP_DMB) begin
-                    if (stagecount == 4) begin
-                        pc_a = 0;
-                        mar_a = 0;
-                        ir_a = 0;
-                        in_a = 0;
-                        out_a = 0;
-                        in_b = 0;
-                        out_b = 0;
-                        ad = 0;
-                        sb = 0;
-                        jmp = 0;
-                        acc_out = 0;
-                        a_out_bus = 0;
-                        b_out_bus = 1;
+                    if (stagecount == 3) begin
+                        pc_a <= 0;
+                        mar_a <= 0;
+                        ir_a <= 0;
+                        in_a <= 0;
+                        out_a <= 0;
+                        in_b <= 0;
+                        out_b <= 0;
+                        ad <= 0;
+                        sb <= 0;
+                        jmp <= 0;
+                        acc_out <= 0;
+                        a_out_bus <= 0;
+                        b_out_bus <= 1;
                     end
-                    if (stagecount == 5) begin
-                        pc_a = 0;
-                        mar_a = 0;
-                        ir_a = 0;
-                        in_a = 0;
-                        out_a = 0;
-                        in_b = 0;
-                        out_b = 0;
-                        ad = 0;
-                        sb = 0;
-                        jmp = 0;
-                        acc_out = 0;
-                        a_out_bus = 0;
-                        b_out_bus = 1;
+                    if (stagecount == 4) begin
+                        pc_a <= 0;
+                        mar_a <= 0;
+                        ir_a <= 0;
+                        in_a <= 0;
+                        out_a <= 0;
+                        in_b <= 0;
+                        out_b <= 0;
+                        ad <= 0;
+                        sb <= 0;
+                        jmp <= 0;
+                        acc_out <= 0;
+                        a_out_bus <= 0;
+                        b_out_bus <= 1;
                     end
                 end
                 else begin
-                    if (stagecount == 4) begin
-                        pc_a = 0;
-                        mar_a = 0;
-                        ir_a = 0;
-                        in_a = 0;
-                        out_a = 0;
-                        in_b = 0;
-                        out_b = 0;
-                        ad = 0;
-                        sb = 0;
-                        jmp = 0;
-                        acc_out = 0;
-                        a_out_bus = 0;
-                        b_out_bus = 0;
+                    if (stagecount == 3) begin
+                        pc_a <= 0;
+                        mar_a <= 0;
+                        ir_a <= 0;
+                        in_a <= 0;
+                        out_a <= 0;
+                        in_b <= 0;
+                        out_b <= 0;
+                        ad <= 0;
+                        sb <= 0;
+                        jmp <= 0;
+                        acc_out <= 0;
+                        a_out_bus <= 0;
+                        b_out_bus <= 0;
                     end
-                    if (stagecount == 5) begin
-                        pc_a = 0;
-                        mar_a = 0;
-                        ir_a = 0;
-                        in_a = 0;
-                        out_a = 0;
-                        in_b = 0;
-                        out_b = 0;
-                        ad = 0;
-                        sb = 0;
-                        jmp = 0;
-                        acc_out = 0;
-                        a_out_bus = 0;
-                        b_out_bus = 0;
+                    if (stagecount == 4) begin
+                        pc_a <= 0;
+                        mar_a <= 0;
+                        ir_a <= 0;
+                        in_a <= 0;
+                        out_a <= 0;
+                        in_b <= 0;
+                        out_b <= 0;
+                        ad <= 0;
+                        sb <= 0;
+                        jmp <= 0;
+                        acc_out <= 0;
+                        a_out_bus <= 0;
+                        b_out_bus <= 0;
                     end
                 end
             end
