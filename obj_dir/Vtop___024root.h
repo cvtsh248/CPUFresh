@@ -17,6 +17,7 @@ class Vtop___024root final : public VerilatedModule {
     VL_OUT8(led_1,7,0);
     VL_OUT8(led_2,7,0);
     VL_IN8(reset,0,0);
+    CData/*7:0*/ led_1__en0;
     CData/*0:0*/ top__DOT__cpu__DOT__pc_a;
     CData/*0:0*/ top__DOT__cpu__DOT__mar_a;
     CData/*0:0*/ top__DOT__cpu__DOT__ir_a;
@@ -28,6 +29,8 @@ class Vtop___024root final : public VerilatedModule {
     CData/*0:0*/ top__DOT__cpu__DOT__acc_out;
     CData/*0:0*/ top__DOT__cpu__DOT__ad;
     CData/*0:0*/ top__DOT__cpu__DOT__sb;
+    CData/*0:0*/ top__DOT__cpu__DOT__a_out;
+    CData/*0:0*/ top__DOT__cpu__DOT__b_out;
     CData/*7:0*/ top__DOT__cpu__DOT__to_a;
     CData/*7:0*/ top__DOT__cpu__DOT__to_acc;
     CData/*2:0*/ top__DOT__cpu__DOT__control__DOT__stagecount;
