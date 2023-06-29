@@ -15,6 +15,8 @@ OP_SUB : 0001 => Subtract value in B from register A and dump in accumulator
 OP_JMP : 1001 => Jump to instruction at address
 OP_HLT : 1111 => Halt 
 OP_WRT : 1010 => Write accumulator contents to RAM
+OP_DMA : 1101 => Dump A register into output 
+OP_DMB : 1011 => Dump B register into output 
 ```
 
 Instructions are given in the following format:
