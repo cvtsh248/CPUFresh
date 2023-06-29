@@ -12,7 +12,8 @@ Vtop::Vtop(VerilatedContext* _vcontextp__, const char* _vcname__)
     : VerilatedModel{*_vcontextp__}
     , vlSymsp{new Vtop__Syms(contextp(), _vcname__, this)}
     , clk{vlSymsp->TOP.clk}
-    , bus_i{vlSymsp->TOP.bus_i}
+    , led_1{vlSymsp->TOP.led_1}
+    , led_2{vlSymsp->TOP.led_2}
     , reset{vlSymsp->TOP.reset}
     , rootp{&(vlSymsp->TOP)}
 {

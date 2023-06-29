@@ -447,7 +447,7 @@ module controller(inout [7:0] bus_i, inout [7:0] bus_d, output reg pc_a, output 
     end
 endmodule
 
-module top(output [7:0] bus_i, input clk, input reset);
+module cpu(output [7:0] bus_i, output [7:0] bus_d, input clk, input reset);
     reg pc_a = 0;
     reg mar_a = 0;
     reg ir_a = 0;
@@ -469,7 +469,8 @@ module top(output [7:0] bus_i, input clk, input reset);
     //----
     reg out_bus = 0;
     reg [3:0] ir_i;
-    reg [7:0] bus_d;
+    //reg [7:0] bus_d;
+    //reg [7:0] bus_i;
     wire [3:0] to_ram;
     wire [7:0] to_ir;
     wire [7:0] to_a;
@@ -499,6 +500,10 @@ module top(output [7:0] bus_i, input clk, input reset);
 
     alu alu(.to_acc(to_acc), .bus_d(bus_d), .from_a(a_calc), .from_b(b_calc), .clk(clk), .ad(ad), .sub(sb));
 
+endmodule
 
+module top(output [7:0] led_1, output [7:0] led_2, input clk, input reset);
+
+    cpu cpu(.bus_i(led_2), .bus_d(led_1), .clk(clk), .reset(reset));
 
 endmodule
