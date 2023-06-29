@@ -33,7 +33,6 @@ For instance, the instruction ``10000110`` would load the value stored at ``0110
 Ensure verilator (at least v5.006) is installed, and run ``instruct.sh``. To edit simulation parameters, edit ``testbench.cpp``, and refer to verilator's documentation. A waveform file called ``Waveform.vcd`` will be updated/created upon running ``instruct.sh``. This file can be viewed using GTKWave. Any signal within the ``cpuf.v`` file can be viewed from ``Waveform.vcd``.
 
 # Todo
-* Add output register, and output instruction
 * Write an assembler
-* Test on actual FPGA hardware
+* ~~Test on actual FPGA hardware~~ Now works on the Tang Nano 9k
 * Add additional instructions (Multiplication, division, and compare)
