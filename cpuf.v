@@ -26,10 +26,9 @@ module program_counter(output reg [7:0] bus_i, input clk, input reset, input pc_
         else if (pc_a)
             pc <= pc + 1; 
         else if (jmp)
-            pc <= from_ir - 4'b0001;
+            pc <= from_ir;
 
-        if (pc_a)
-         bus_i <= {4'b0,pc};
+        bus_i <= {4'b0,pc};
     end
 
     //assign bus_i = (pc_a) ? {4'bz,pc} : 8'bz;

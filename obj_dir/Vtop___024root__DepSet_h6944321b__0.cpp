@@ -164,8 +164,7 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                 = (0xfU & ((IData)(1U) + (IData)(vlSelf->top__DOT__cpu__DOT__counter__DOT__pc)));
         } else if (vlSelf->top__DOT__cpu__DOT__jmp) {
             __Vdly__top__DOT__cpu__DOT__counter__DOT__pc 
-                = (0xfU & ((IData)(vlSelf->top__DOT__cpu__DOT__ir__DOT__address) 
-                           - (IData)(1U)));
+                = vlSelf->top__DOT__cpu__DOT__ir__DOT__address;
         }
         if (vlSelf->top__DOT__cpu__DOT__ir_a) {
             vlSelf->top__DOT__cpu__DOT__ir__DOT__instruction 
@@ -173,10 +172,8 @@ VL_INLINE_OPT void Vtop___024root___nba_sequent__TOP__1(Vtop___024root* vlSelf) 
                            >> 4U));
         }
     }
-    if (vlSelf->top__DOT__cpu__DOT__pc_a) {
-        vlSelf->top__DOT__cpu__DOT__bus_i__out__strong__out23 
-            = vlSelf->top__DOT__cpu__DOT__counter__DOT__pc;
-    }
+    vlSelf->top__DOT__cpu__DOT__bus_i__out__strong__out23 
+        = vlSelf->top__DOT__cpu__DOT__counter__DOT__pc;
     __Vdly__top__DOT__cpu__DOT__ram__DOT__out_ir = 
         ((0x80U >= (IData)(vlSelf->top__DOT__cpu__DOT__ram__DOT__index_ir))
           ? (0xffU & (((0U == (0x1fU & (IData)(vlSelf->top__DOT__cpu__DOT__ram__DOT__index_ir)))
@@ -317,7 +314,7 @@ void Vtop___024root___eval(Vtop___024root* vlSelf) {
 #ifdef VL_DEBUG
                     Vtop___024root___dump_triggers__act(vlSelf);
 #endif
-                    VL_FATAL_MT("cpuf.v", 612, "", "Active region did not converge.");
+                    VL_FATAL_MT("cpuf.v", 611, "", "Active region did not converge.");
                 }
                 vlSelf->__VactIterCount = ((IData)(1U) 
                                            + vlSelf->__VactIterCount);
@@ -332,7 +329,7 @@ void Vtop___024root___eval(Vtop___024root* vlSelf) {
 #ifdef VL_DEBUG
                 Vtop___024root___dump_triggers__nba(vlSelf);
 #endif
-                VL_FATAL_MT("cpuf.v", 612, "", "NBA region did not converge.");
+                VL_FATAL_MT("cpuf.v", 611, "", "NBA region did not converge.");
             }
             __VnbaIterCount = ((IData)(1U) + __VnbaIterCount);
             Vtop___024root___eval_nba(vlSelf);
