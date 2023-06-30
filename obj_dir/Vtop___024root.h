@@ -30,6 +30,10 @@ class Vtop___024root final : public VerilatedModule {
     CData/*0:0*/ top__DOT__cpu__DOT__sb;
     CData/*0:0*/ top__DOT__cpu__DOT__a_out;
     CData/*0:0*/ top__DOT__cpu__DOT__b_out;
+    CData/*0:0*/ top__DOT__cpu__DOT__c_f;
+    CData/*0:0*/ top__DOT__cpu__DOT__c_e;
+    CData/*0:0*/ top__DOT__cpu__DOT__c_g;
+    CData/*0:0*/ top__DOT__cpu__DOT__c_l;
     CData/*7:0*/ top__DOT__cpu__DOT__to_a;
     CData/*7:0*/ top__DOT__cpu__DOT__bus_i__out__strong__out23;
     CData/*2:0*/ top__DOT__cpu__DOT__control__DOT__stagecount;

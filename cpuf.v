@@ -12,8 +12,11 @@
 // OP_JMP : 1001 => Jump to instruction at address
 // OP_HLT : 1111 => Halt 
 // OP_WRT : 1010 => Write accumulator contents to RAM
-// OP_DMA : 1101 => Dump A register into data bus
-// OP_DMB : 1011 => Dump B register into data bus
+// OP_DMA : 1011 => Dump A register into data bus
+// OP_DMB : 1101 => Dump B register into data bus
+// OP_CME : 0101 => If A == B, jump to supplied address
+// OP_CMG : 0111 => If A > B, jump to supplied address
+// OP_CML : 0011 => If A < B, jump to supplied address
 
 // STUFF ON Instruction Bus
 module program_counter(output reg [7:0] bus_i, input clk, input reset, input pc_a, input [3:0] from_ir, input jmp);
@@ -102,6 +105,15 @@ module ram(output [7:0] to_ir, inout [7:0] to_a, inout [7:0] to_b, inout [7:0] t
         mem[87:80] <= 8'b10001111; //LDA 1000
         mem[95:88] <= 8'b10111111; //DMA
         mem[103:96] <= 8'b11111111; //HLT
+
+        /*mem[7:0] <= 8'b10000001; //LDA 0011
+        mem[15:8] <= 8'b01000011; //LDB 0011
+        mem[23:16] <= 8'b00110101; //CML 0101
+        mem[31:24] <= 8'b11111011; // HLT
+        mem[39:32] <= 8'b10001011; // Data
+        mem[47:40] <= 8'b10110000; //DMA
+        mem[55:48] <= 8'b11111111; //HLT*/
+
         
         if(reset) begin
             //index <= 0;
@@ -145,7 +157,7 @@ module register(output [7:0] to_out, inout [7:0] bus_d, input [7:0] from_inp, in
 
 endmodule
 
-module alu(output reg [7:0] to_acc, inout [7:0] bus_d, input [7:0] from_a, input [7:0] from_b, input clk, input ad, input sub);
+module alu(output reg [7:0] to_acc, output c_f, inout [7:0] bus_d, input [7:0] from_a, input [7:0] from_b, input clk, input ad, input sub, input c_e, input c_g, input c_l);
     reg [7:0] out;
     
     always @(posedge clk) begin
@@ -153,13 +165,33 @@ module alu(output reg [7:0] to_acc, inout [7:0] bus_d, input [7:0] from_a, input
             out <= from_a + from_b;
         if(sub)
             out <= from_a - from_b;
+        if (c_e) begin
+            if (from_a == from_b)
+                c_f <= 1;
+            else
+                c_f <= 0;
+        end
+        else if (c_g) begin
+            if (from_a > from_b)
+                c_f <= 1;
+            else
+                c_f <= 0;
+        end
+        else if (c_l) begin
+            if (from_a < from_b)
+                c_f <= 1;
+            else
+                c_f <= 0;
+        end
+        else
+            c_f <= 0;
     end
     assign to_acc = (1) ? out : 8'bz; //ad || sub
 
 
 endmodule
 
-module controller(inout [7:0] bus_i, inout [7:0] bus_d, output reg pc_a, output reg mar_a, output reg ir_a, output reg in_a, output reg out_a, output reg in_b, output reg out_b, output reg ad, output reg sb, output reg jmp, output reg acc_out, output reg a_out_bus, output reg b_out_bus, input [3:0] ir_i, input clk, input reset);
+module controller(inout [7:0] bus_i, inout [7:0] bus_d, output reg pc_a, output reg mar_a, output reg ir_a, output reg in_a, output reg out_a, output reg in_b, output reg out_b, output reg ad, output reg sb, output reg jmp, output reg acc_out, output reg a_out_bus, output reg b_out_bus, output reg c_e, output reg c_g, output reg c_l, input reg c_f, input [3:0] ir_i, input clk, input reset);
     reg [2:0] stagecount = 0;
     reg aflag = 0;
 
@@ -174,9 +206,12 @@ module controller(inout [7:0] bus_i, inout [7:0] bus_d, output reg pc_a, output 
     parameter OP_WRT = 4'b1010;
     parameter OP_DMA = 4'b1011;
     parameter OP_DMB = 4'b1101;
+    parameter OP_CME = 4'b0101;
+    parameter OP_CMG = 4'b0111;
+    parameter OP_CML = 4'b0011;
 
 
-    // Control word: pc_a, mar_a, ir_a, in_a (input to ram), out_a (output from ram), in_b, out_b, ad, sb, jmp, acc_out, a_out_bus, b_out_bus
+    // Control word: pc_a, mar_a, ir_a, in_a (input to ram), out_a (output from ram), in_b, out_b, ad, sb, jmp, acc_out, a_out_bus, b_out_bus, c_e, c_g, c_l
 
     always @(negedge clk) begin
         if (ir_i == OP_HLT) begin
@@ -290,6 +325,111 @@ module controller(inout [7:0] bus_i, inout [7:0] bus_d, output reg pc_a, output 
                     b_out_bus <= 0;
                 end
 
+            end
+            else if(ir_i == OP_CME) begin
+                if (stagecount == 3) begin
+                    pc_a <= 0;
+                    mar_a <= 0;
+                    ir_a <= 0;
+                    in_a <= 0;
+                    out_a <= 0;
+                    in_b <= 0;
+                    out_b <= 0;
+                    ad <= 0;
+                    sb <= 0;
+                    jmp <= 0;
+                    acc_out <= 0;
+                    a_out_bus <= 0;
+                    b_out_bus <= 0;
+                    c_e <= 1;
+                end
+                if (stagecount == 4) begin
+                    pc_a <= 0;
+                    mar_a <= 0;
+                    ir_a <= 0;
+                    in_a <= 0;
+                    out_a <= 0;
+                    in_b <= 0;
+                    out_b <= 0;
+                    ad <= 0;
+                    sb <= 0;
+                    acc_out <= 0;
+                    a_out_bus <= 0;
+                    b_out_bus <= 0;
+                    c_e <= 0;
+                    if (c_f)
+                        jmp <= 1;
+                end
+            end
+            else if(ir_i == OP_CMG) begin
+                if (stagecount == 3) begin
+                    pc_a <= 0;
+                    mar_a <= 0;
+                    ir_a <= 0;
+                    in_a <= 0;
+                    out_a <= 0;
+                    in_b <= 0;
+                    out_b <= 0;
+                    ad <= 0;
+                    sb <= 0;
+                    jmp <= 0;
+                    acc_out <= 0;
+                    a_out_bus <= 0;
+                    b_out_bus <= 0;
+                    c_g <= 1;
+                end
+                if (stagecount == 4) begin
+                    pc_a <= 0;
+                    mar_a <= 0;
+                    ir_a <= 0;
+                    in_a <= 0;
+                    out_a <= 0;
+                    in_b <= 0;
+                    out_b <= 0;
+                    ad <= 0;
+                    sb <= 0;
+                    acc_out <= 0;
+                    a_out_bus <= 0;
+                    b_out_bus <= 0;
+                    c_g <= 0;
+                    if (c_f)
+                        jmp <= 1;
+                end
+            end
+            else if(ir_i == OP_CML) begin
+                if (stagecount == 3) begin
+                    pc_a <= 0;
+                    mar_a <= 0;
+                    ir_a <= 0;
+                    in_a <= 0;
+                    out_a <= 0;
+                    in_b <= 0;
+                    out_b <= 0;
+                    ad <= 0;
+                    sb <= 0;
+                    jmp <= 0;
+                    acc_out <= 0;
+                    a_out_bus <= 0;
+                    b_out_bus <= 0;
+                    c_l <= 1;
+                end
+                if (stagecount == 4) begin
+                    pc_a <= 0;
+                    mar_a <= 0;
+                    ir_a <= 0;
+                    in_a <= 0;
+                    out_a <= 0;
+                    in_b <= 0;
+                    out_b <= 0;
+                    ad <= 0;
+                    sb <= 0;
+                    acc_out <= 0;
+                    a_out_bus <= 0;
+                    b_out_bus <= 0;
+                    c_l <= 0;
+                    if (c_f)
+                        jmp <= 1;
+                end
             end
             else begin
                 if (ir_i == OP_LDA) begin
@@ -575,6 +715,11 @@ module cpu(output [7:0] bus_i, output [7:0] bus_d, input clk, input reset);
     //----
     reg out_bus = 0;
     reg [3:0] ir_i;
+    // Comparator flags
+    reg c_f; //Jump flag
+    reg c_e;
+    reg c_g;
+    reg c_l;
     //reg [7:0] bus_d;
     //reg [7:0] bus_i;
     wire [3:0] to_ram;
@@ -587,7 +732,7 @@ module cpu(output [7:0] bus_i, output [7:0] bus_d, input clk, input reset);
     wire [7:0] c_calc;
     wire [3:0] address_ir;
 
-    controller control(.bus_i(bus_i), .bus_d(bus_d), .pc_a(pc_a), .mar_a(mar_a), .ir_a(ir_a), .in_a(in_a), .out_a(out_a), .in_b(in_b), .out_b(out_b), .ad(ad), .sb(sb), .jmp(jmp), .acc_out(acc_out), .a_out_bus(a_out), .b_out_bus(b_out), .ir_i(ir_i), .clk(clk), .reset(reset));
+    controller control(.bus_i(bus_i), .bus_d(bus_d), .pc_a(pc_a), .mar_a(mar_a), .ir_a(ir_a), .in_a(in_a), .out_a(out_a), .in_b(in_b), .out_b(out_b), .ad(ad), .sb(sb), .jmp(jmp), .acc_out(acc_out), .a_out_bus(a_out), .b_out_bus(b_out), .c_e(c_e), .c_g(c_g), .c_l(c_l), .c_f(c_f), .ir_i(ir_i), .clk(clk), .reset(reset));
 
     program_counter counter(.bus_i(bus_i), .clk(clk), .reset(reset), .pc_a(pc_a), .from_ir(address_ir), .jmp(jmp));
 
@@ -604,7 +749,7 @@ module cpu(output [7:0] bus_i, output [7:0] bus_d, input clk, input reset);
 
     register accumulator(.to_out(c_calc), .bus_d(bus_d), .from_inp(to_acc), .clk(clk), .inp_in(c_out_acc), .out_o(acc_out), .out_b(0));
 
-    alu alu(.to_acc(to_acc), .bus_d(bus_d), .from_a(a_calc), .from_b(b_calc), .clk(clk), .ad(ad), .sub(sb));
+    alu alu(.to_acc(to_acc), .c_f(c_f), .bus_d(bus_d), .from_a(a_calc), .from_b(b_calc), .clk(clk), .ad(ad), .sub(sb), .c_e(c_e), .c_g(c_g), .c_l(c_l));
 
 endmodule
 
