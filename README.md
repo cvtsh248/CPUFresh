@@ -4,6 +4,17 @@ Work in progress 8 bit CPU, designed in verilog, and simulated via verilator. As
 
 # Current instruction set
 
+Instructions are given in the following format:
+
+```
+[_ _ _ _][_ _ _ _]
+  Instr.   Addr.
+```
+
+Where the address points to a certain location in memory.
+
+For instance, the instruction ``10000110`` would load the value stored at ``0110`` in memory into register A.
+
 The following instructions are currently supported:
 
 ```
@@ -15,20 +26,12 @@ OP_SUB : 0001 => Subtract value in B from register A and dump in accumulator
 OP_JMP : 1001 => Jump to instruction at address
 OP_HLT : 1111 => Halt 
 OP_WRT : 1010 => Write accumulator contents to RAM
-OP_DMA : 1101 => Dump A register into output 
-OP_DMB : 1011 => Dump B register into output 
+OP_DMA : 1011 => Dump A register into data bus
+OP_DMB : 1101 => Dump B register into data bus
+OP_CME : 0101 => If A == B, jump to supplied address
+OP_CMG : 0111 => If A > B, jump to supplied address
+OP_CML : 0011 => If A < B, jump to supplied address
 ```
-
-Instructions are given in the following format:
-
-```
-[_ _ _ _][_ _ _ _]
-  Instr.   Addr.
-```
-
-Where the address points to a certain location in memory.
-
-For instance, the instruction ``10000110`` would load the value stored at ``0110`` in memory into register A.
 
 # Running the simulation
 
